@@ -21,6 +21,19 @@ var ParseWord = function (response) {
             
             Word.Word = meaning.headword;
             Word.Type = meaning.part_of_speech;
+            if (Word.Type && Word.Type.length>0)
+            {
+                switch (Word.Type[0])
+                {
+                    case 'a':
+                    case 'e': case 'i':
+                    case 'o': case 'u':
+                        Word.Type='an ' + Word.Type;
+                        break;
+                    default:
+                        Word.Type='a ' + Word.Type;
+                }
+            }
             
             if (meaning.senses && meaning.senses.length > 0) {
                 var sense = meaning.senses[ 0 ];
@@ -29,10 +42,10 @@ var ParseWord = function (response) {
                     continue;
                 
                 Word.Definition = sense.definition[ 0 ];
-                Word.Synonym = new Set;
-                Word.Antonym = [];
-                Word.Hypernym = [];
-                Word.Variant = [];
+                Word.Synonyms = new Set;
+                Word.Antonyms = [];
+                Word.Hypernyms = [];
+                Word.Variants = [];
                 Word.Rhyme = [];
                 
                 var example = sense.collocation_examples;
@@ -87,16 +100,16 @@ var ParseExtras = function (data, Word) {
     for (var x = 0; x < data.length; x++) {
         var sub = data[ x ];
         if (sub.relationshipType === 'equivalent' || sub.relationshipType === 'synonym') {
-            Word.Synonym.addEach(sub.words);
+            Word.Synonyms.addEach(sub.words);
         }
         if (sub.relationshipType === 'antonym') {
-            Word.Antonym = sub.words;
+            Word.Antonyms = sub.words;
         }
         if (sub.relationshipType === 'hypernym') {
-            Word.Hypernym = sub.words;
+            Word.Hypernyms = sub.words;
         }
         if (sub.relationshipType === 'variant') {
-            Word.Variant = sub.words;
+            Word.Variants = sub.words;
         }
         if (sub.relationshipType === 'rhyme') {
             Word.Rhyme = sub.words;
@@ -120,7 +133,7 @@ var Extras = function (Word) {
             return ParseExtras(data.body, Word);
         })
         .then(function (Word) {
-            Word.Synonym = Word.Synonym.toArray();
+            Word.Synonyms = Word.Synonyms.toArray();
             return Word;
         })
         .catch(function (e) {
