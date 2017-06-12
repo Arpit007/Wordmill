@@ -1,6 +1,9 @@
 /**
  * Created by Home Laptop on 11-Jun-17.
  */
+'use strict';
+
+module.change_code = 1;
 
 var request = require('request-promise');
 var Set = require('collections/set');
@@ -41,7 +44,10 @@ var ParseWord = function (response) {
                 if (!sense.definition || sense.definition.length < 1)
                     continue;
                 
-                Word.Definition = sense.definition[ 0 ];
+                if (typeof sense.definition === 'string')
+                    Word.Definition = sense.definition;
+                else Word.Definition = sense.definition[ 0 ];
+                
                 Word.Synonyms = new Set;
                 Word.Antonyms = [];
                 Word.Hypernyms = [];
@@ -91,8 +97,6 @@ var Define = function (Word) {
         .then(ParseWord)
         .then(function (data) {
             return Filter(Word, data);
-        }).catch(function (e) {
-            console.log(e);
         });
 };
 
@@ -100,7 +104,9 @@ var ParseExtras = function (data, Word) {
     for (var x = 0; x < data.length; x++) {
         var sub = data[ x ];
         if (sub.relationshipType === 'equivalent' || sub.relationshipType === 'synonym') {
-            Word.Synonyms.addEach(sub.words);
+            if (Word.Synonyms)
+                Word.Synonyms.addEach(sub.words);
+            else Word.Synonyms = new Set(sub.words);
         }
         if (sub.relationshipType === 'antonym') {
             Word.Antonyms = sub.words;

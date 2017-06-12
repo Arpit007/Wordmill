@@ -1,6 +1,9 @@
 /**
  * Created by Home Laptop on 12-Jun-17.
  */
+
+module.change_code = 1;
+
 var _ = require('lodash');
 
 var Speech = {
