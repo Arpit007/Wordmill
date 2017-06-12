@@ -4,6 +4,9 @@
 var _ = require('lodash');
 
 var Speech = {
+    NoWord : 'Please specify the word',
+    Done : 'Sorry, That\'s all I know',
+    
     NoDefine : 'Sorry, I couldn\'t find its meaning.',
     DefineWord : 'The word ${Word} means ${Definition}.',
     DefineWithType : 'As ${Type}, it means ${Definition}.',

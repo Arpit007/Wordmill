@@ -6,7 +6,7 @@ var request = require('request-promise');
 var Set = require('collections/set');
 var _ = require('lodash');
 
-var DefineUrl = 'http://api.pearson.com/v2/dictionaries/ldoce5/entries?headword=';
+var DefineUrl = 'http://api.pearson.com/v2/dictionaries/entries?limit=3&headword=';
 var ExtrasUrl = 'http://api.wordnik.com/v4/word.json/${Word}/relatedWords?useCanonical=false&limitPerRelationshipType=10'
     + '&api_key=a2a73e7b926c924fad7001ca3111acd55af2ffabf50eb4ae5';
 

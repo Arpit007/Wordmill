@@ -2,8 +2,9 @@
  * Created by Home Laptop on 11-Jun-17.
  */
 var config = require('./src/config');
-var word = require('./src/word');
+var word = require('./src/fetchWord');
 var speech = require('./src/speech');
+
 
 word.Define('young')
     .then(function (Words) {
