@@ -23,7 +23,7 @@
   "license": "ISC",
 
   "dependencies": {
-    "alexa-app": "^2.3.2",
+    "alexa-app": "^4.0.1",
     "collections": "^5.0.6",
     "lodash": "^4.17.4",
     "request-promise": "^4.2.1"

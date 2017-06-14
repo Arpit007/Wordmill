@@ -28,33 +28,17 @@ app.intent('define', intents.Define,
             res.say(genericSpeech.Pardon).reprompt(genericSpeech.RePrompt).shouldEndSession(false);
             return true;
         } else {
-            fetchWord.Define(Word)
+            return fetchWord.Define(Word)
                 .then(function (Words) {
-                    var Result = speech.PrintDefine(Words[0]);
+                    var Result = speech.PrintDefine(Words[ 0 ]);
                     console.log(Result);
                     res.say(Result).send();
                 })
                 .catch(function (e) {
                     res.say(genericSpeech.Apologize).reprompt(genericSpeech.Prompt).shouldEndSession(false).send();
                 });
-            return false;
         }
     }
 );
 
 module.exports = app;
-/*
-
- fetchWord.Define('red')
- .then(function (Words) {
- return fetchWord.Extras(Words[ 0 ]);
- })
- .then(function (WordData) {
- console.log(require('./src/genericSpeech').PrintWelcome());
- console.log(speech.PrintNoDefine(WordData));
- console.log(speech.PrintDefine(WordData));
- console.log(speech.PrintDefineWithType(WordData));
- console.log(speech.PrintSingleExtra(speech.Synonyms, WordData.Synonyms[ 0 ]));
- console.log(speech.PrintMultiExtras(speech.Synonyms, WordData.Synonyms));
- console.log(speech.PrintMultiExtrasWithLimit(speech.Synonyms, WordData.Synonyms, 3));
- });*/

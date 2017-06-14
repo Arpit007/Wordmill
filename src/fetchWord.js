@@ -9,32 +9,36 @@ var request = require('request-promise');
 var Set = require('collections/set');
 var _ = require('lodash');
 
-var DefineUrl = 'http://api.pearson.com/v2/dictionaries/entries?limit=3&headword=';
-var ExtrasUrl = 'http://api.wordnik.com/v4/word.json/${Word}/relatedWords?useCanonical=false&limitPerRelationshipType=10'
-    + '&api_key=a2a73e7b926c924fad7001ca3111acd55af2ffabf50eb4ae5';
+var config = require('./config');
+var wordBase = require('./wordBase');
 
-var ParseWord = function (response) {
+
+var ParseWord = function (BaseWord, response) {
     if (response.statusCode === 200) {
         var results = response.body.results;
-        var Data = [];
+        
+        BaseWord.LoadedDefinition = true;
         
         for (var i = 0; i < results.length; i++) {
             var meaning = results[ i ];
-            var Word = {};
             
-            Word.Word = meaning.headword;
-            Word.Type = meaning.part_of_speech;
-            if (Word.Type && Word.Type.length>0)
-            {
-                switch (Word.Type[0])
-                {
+            if (meaning.headword !== BaseWord.RootWord)
+                continue;
+            
+            var DefinitionWord = wordBase.BaseDefinition();
+            
+            DefinitionWord.PartOfSpeech = meaning.part_of_speech;
+            if (DefinitionWord.PartOfSpeech && DefinitionWord.PartOfSpeech.length > 0) {
+                switch (DefinitionWord.PartOfSpeech[ 0 ]) {
                     case 'a':
-                    case 'e': case 'i':
-                    case 'o': case 'u':
-                        Word.Type='an ' + Word.Type;
+                    case 'e':
+                    case 'i':
+                    case 'o':
+                    case 'u':
+                        DefinitionWord.PartOfSpeech = 'an ' + DefinitionWord.PartOfSpeech;
                         break;
                     default:
-                        Word.Type='a ' + Word.Type;
+                        DefinitionWord.PartOfSpeech = 'a ' + DefinitionWord.PartOfSpeech;
                 }
             }
             
@@ -45,64 +49,78 @@ var ParseWord = function (response) {
                     continue;
                 
                 if (typeof sense.definition === 'string')
-                    Word.Definition = sense.definition;
-                else Word.Definition = sense.definition[ 0 ];
+                    DefinitionWord.Meaning = sense.definition;
+                else DefinitionWord.Meaning = sense.definition[ 0 ];
                 
-                Word.Synonyms = new Set;
-                Word.Antonyms = [];
-                Word.Hypernyms = [];
-                Word.Variants = [];
-                Word.Rhyme = [];
+                var trans_ex = sense.translations;
+                if (trans_ex && trans_ex.length>0)
+                {
+                    trans_ex = trans_ex[0].example;
+                    trans_ex.forEach(function (ex) {
+                        if (ex.text)
+                            DefinitionWord.Example.push(ex.text);
+                    });
+                }
                 
                 var example = sense.collocation_examples;
                 if (example && example.length > 0) {
                     example = example[ 0 ];
-                    Word.Collocation_Example = example.example.text;
+                    DefinitionWord.Example.push(example.example.text);
                 }
                 
                 example = sense.examples;
                 if (!example && sense.gramatical_examples && sense.gramatical_examples.length > 0)
                     example = sense.gramatical_examples[ 0 ].examples;
                 
-                if (example)
-                    Word.Example = example[ 0 ].text;
+                if (example) {
+                    example.forEach(function (ex) {
+                        DefinitionWord.Example.push(ex.text);
+                    });
+                }
                 
-                Data.push(Word);
+                BaseWord.Definitions.push(DefinitionWord);
             }
         }
-        return Data;
+        return BaseWord;
     }
     else throw Error("Wrong Response");
 };
 
-var Filter = function (RootWord, data) {
-    RootWord = RootWord.trim().toLowerCase();
-    var result = [];
-    for (var i = 0; i < data.length; i++) {
-        if (data[ i ].Word === RootWord)
-            result.push(data[ i ]);
-    }
-    return result;
-};
-
 var Define = function (Word) {
+    if (typeof Word === 'string') {
+        var word = new wordBase.BaseWord();
+        word.RootWord = Word.trim().toLowerCase();
+        Word = word;
+    }
+    
     var options = {
         method : 'GET',
-        uri : DefineUrl + Word,
+        uri : config.DefineUrl + Word.RootWord,
         resolveWithFullResponse : true,
         json : true
     };
     
     return request(options)
-        .then(ParseWord)
-        .then(function (data) {
-            return Filter(Word, data);
+        .then(function (response) {
+            return ParseWord(Word, response);
+        })
+        .then(function (Word) {
+            if (Word.Definitions && Word.Definitions.length <= 0)
+                return DefineSecondary(Word);
+            else return Word;
+        })
+        .catch(function (e) {
+            console.log(e);
+            return Word;
         });
 };
 
 var ParseExtras = function (data, Word) {
+    Word.Synonyms = null;
+    
     for (var x = 0; x < data.length; x++) {
         var sub = data[ x ];
+        
         if (sub.relationshipType === 'equivalent' || sub.relationshipType === 'synonym') {
             if (Word.Synonyms)
                 Word.Synonyms.addEach(sub.words);
@@ -118,14 +136,25 @@ var ParseExtras = function (data, Word) {
             Word.Variants = sub.words;
         }
         if (sub.relationshipType === 'rhyme') {
-            Word.Rhyme = sub.words;
+            Word.Rhymes = sub.words;
         }
     }
+    
+    if (Word.Synonyms)
+        Word.Synonyms = Word.Synonyms.toArray();
+    
+    Word.LoadedExtras = true;
     return Word;
 };
 
 var Extras = function (Word) {
-    var Url = _.template(ExtrasUrl)({ Word : Word.Word });
+    if (typeof Word === 'string') {
+        var word = new wordBase.BaseWord();
+        word.RootWord = Word.trim().toLowerCase();
+        Word = word;
+    }
+    
+    var Url = _.template(config.ExtrasUrl)({ Word : Word.RootWord });
     
     var options = {
         method : 'GET',
@@ -136,18 +165,79 @@ var Extras = function (Word) {
     
     return request(options)
         .then(function (data) {
-            return ParseExtras(data.body, Word);
-        })
-        .then(function (Word) {
-            Word.Synonyms = Word.Synonyms.toArray();
-            return Word;
+            if (data.statusCode === 200)
+                return ParseExtras(data.body, Word);
+            else throw Error("Wrong Response");
         })
         .catch(function (e) {
             console.log(e);
+            return Word;
+        });
+};
+
+var ParseSecondary = function(BaseWord, data)
+{
+    for (var x = 0; x < data.length; x++) {
+        var sub = data[ x ];
+        
+        if (sub.word !== BaseWord.RootWord)
+            continue;
+        
+        var Define = new wordBase.BaseDefinition();
+        Define.Example.concat(sub.exampleUses);
+        
+        Define.PartOfSpeech = sub.partOfSpeech;
+        if (Define.PartOfSpeech && Define.PartOfSpeech.length > 0) {
+            switch (Define.PartOfSpeech[ 0 ]) {
+                case 'a':
+                case 'e':
+                case 'i':
+                case 'o':
+                case 'u':
+                    Define.PartOfSpeech = 'an ' + Define.PartOfSpeech;
+                    break;
+                default:
+                    Define.PartOfSpeech = 'a ' + Define.PartOfSpeech;
+            }
+        }
+        
+        Define.Meaning = sub.text;
+        BaseWord.Definitions.push(Define);
+    }
+    BaseWord.LoadedSecondary = true;
+    return BaseWord;
+};
+
+var DefineSecondary = function (Word) {
+    if (typeof Word === 'string') {
+        var word = new wordBase.BaseWord();
+        word.RootWord = Word.trim().toLowerCase();
+        Word = word;
+    }
+    
+    var Url = _.template(config.DefineSecondaryUrl)({ Word : Word.RootWord });
+    
+    var options = {
+        method : 'GET',
+        uri : Url,
+        resolveWithFullResponse : true,
+        json : true
+    };
+    
+    return request(options)
+        .then(function (data) {
+            if (data.statusCode === 200)
+                return ParseSecondary(Word, data.body);
+            else throw Error("Wrong Response");
+        })
+        .catch(function (e) {
+            console.log(e);
+            return Word;
         });
 };
 
 module.exports = {
     Define : Define,
+    DefineSecondary : DefineSecondary,
     Extras : Extras
 };
