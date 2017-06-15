@@ -3,41 +3,28 @@
  */
 'use strict';
 
-module.change_code=1;
-
-var Define = {
+var BaseOperation = {
     'slots': {
-        "ROOTWORD" : "SEARCH_TERMS"
+        "ROOTWORD" : "SEARCH_TERMS",
+        "OPERATION" : "CUSTOM_OPERATIONS"
     },
     'utterances': [
-        'Define {-|ROOTWORD}',
-        '{-|ROOTWORD} define',
-        'Define the word {-|ROOTWORD}',
-        '{|Tell|Tell me|Say|Say me} {|the} word {-|ROOTWORD} is defined as',
-        '{|Tell|Tell me|Say|Say me} {|the} Definition of {-|ROOTWORD}',
-        '{|Tell|Tell me|Say|Say me} {|the} Definition of {-|ROOTWORD} is',
-        '{|Tell|Tell me|Say|Say me} {|the} Definition of {|the} word {-|ROOTWORD}',
-        '{|Tell|Tell me|Say|Say me} {|the} {-|ROOTWORD} means',
-        '{|Tell|Tell me|Say|Say me} {|the} {-|ROOTWORD} meaning',
-        '{|Tell|Tell me|Say|Say me} {|the} Meaning of {-|ROOTWORD}',
-        '{|Tell|Tell me|Say|Say me} What is the meaning of {-|ROOTWORD}',
-        '{|Tell|Tell me|Say|Say me} What is {-|ROOTWORD}',
-        '{|Tell|Tell me|Say|Say me} {|the} Definition of {-|ROOTWORD}',
-        'Explain {|the} {|word} {-|ROOTWORD}',
-        'Explain the meaning of {|the} {|word} {-|ROOTWORD}',
-        'Explanation of {|the} {|word} {-|ROOTWORD}',
-        '{|Tell|Tell me|Say|Say me} {|the} {-|ROOTWORD} explanation',
-        '{|Tell|Tell me|Say|Say me} Something about {|the} {|word} {-|ROOTWORD}',
-        'Characterise {|the} {|word} {-|ROOTWORD}',
-        'Characterize {|the} {|word} {-|ROOTWORD}',
-        '{|Tell|Tell me|Say|Say me} What are the characteristics of {|the} {|word} {-|ROOTWORD}',
-        'Describe {|the} {|word} {-|ROOTWORD}',
-        'Describe the meaning of {|the} {|word} {-|ROOTWORD}',
-        'Tell about {|the} {|word} {-|ROOTWORD}',
-        'State {|the} {|word} {-|ROOTWORD}',
-        '{|Tell|Tell me|Say|Say me} {|the} significance of {-|ROOTWORD}'
+        '{-|OPERATION} {-|ROOTWORD}',
+        '{|State|Give|Give me|Tell|Tell me|Say|Say me} {|what is} {|the} {-|OPERATION} {|of} {|the} {|word} {-|ROOTWORD} {|is}',
+        '{Describe|Explain} {|to me|me} {|the} {|meaning} {|of} {|the} {|word} {-|ROOTWORD}',
+        '{|Give|Give me|Tell|Tell me|Say|Say me} {|the} {|word} {-|ROOTWORD} {|is} {|-|OPERATION} {|as}',
+        '{|Tell|Tell me|Say|Say me} {|something|anything} about {|the} {|word} {-|ROOTWORD}',
+        '{|State|Give|Give me|Tell|Tell me|Say|Say me} {|what are} {|the} {-|OPERATION} {|of} {|the} {|word} {-|ROOTWORD}'
     ]
 };
 
+var Extra = {
+    'slots': {
+        "EXTRA" : "EXTRA_LIST",
+        "ROOTWORD" : "SEARCH_TERMS"
+    },
+    'utterances': []
+};
 
-module.exports.Define = Define;
+
+module.exports.BaseOperation = BaseOperation;

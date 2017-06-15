@@ -2,8 +2,6 @@
  * Created by Home Laptop on 12-Jun-17.
  */
 
-module.change_code = 1;
-
 var _ = require('lodash');
 
 var Speech = {
@@ -37,6 +35,10 @@ var Speech = {
     PrintDefineWithType : function (Word, Index) {
         return _.template(this.DefineWithType)({ Type : Word.Definitions[Index].PartOfSpeech, Word : Word.RootWord,
             Definition : Word.Definitions[Index].Meaning });
+    },
+    
+    PrintNoneExtra : function (Extra) {
+        return _.template(this.NoneExtra)({ Extra : Extra });
     }
     
     /*PrintSingleExtra : function (Word, Extra) {

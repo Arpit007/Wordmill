@@ -3,8 +3,6 @@
  */
 'use strict';
 
-module.change_code = 1;
-
 var request = require('request-promise');
 var Set = require('collections/set');
 var _ = require('lodash');

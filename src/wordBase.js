@@ -1,6 +1,8 @@
 /**
  * Created by Home Laptop on 14-Jun-17.
  */
+'use strict';
+
 function wordBase() {
     return {
         "RootWord": null,

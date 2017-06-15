@@ -3,8 +3,6 @@
  */
 'use strict';
 
-module.change_code = 1;
-
 var config = {
     DefineUrl : 'http://api.pearson.com/v2/dictionaries/entries?limit=3&headword=',
     DefineSecondaryUrl : 'http://api.wordnik.com:80/v4/word.json/${Word}/definitions?limit=5'

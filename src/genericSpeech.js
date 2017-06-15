@@ -4,8 +4,6 @@
 'use strict';
 var _ = require('lodash');
 
-module.change_code = 1;
-
 var Speech = {
     Welcome : 'Welcome to ${appName}, ask me any word\'s meaning, synonyms, etc.',
     Pardon : 'I couldn\'t get it, please try again',

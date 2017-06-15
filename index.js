@@ -13,6 +13,8 @@ var fetchWord = require('./src/fetchWord');
 var speech = require('./src/speech');
 var genericSpeech = require('./src/genericSpeech');
 var intents = require('./src/intents');
+var customSlots = require('./src/customSlots');
+var Response = require('./src/Response');
 
 var app = new Alexa.app(appName);
 var wordBase = require('./src/wordBase');
@@ -23,39 +25,77 @@ app.launch(function (req, res) {
 });
 
 
-app.intent('define', intents.Define,
+app.intent('baseOperation', intents.BaseOperation,
     function (req, res) {
         var Word = req.slot('ROOTWORD').trim().toLowerCase();
+        var Operation = req.slot('CUSTOM_OPERATIONS').trim().toLowerCase();
         
-        var Reply = function () {
-          if(word.Definitions.length === 0){
-              res.say(speech.NoDefine).reprompt(genericSpeech.Prompt).shouldEndSession(false).send();
-          }
-          else {
-              var Result = speech.PrintDefine(word, 0);
-              res.say(Result).send();
-          }
-        };
-        
-        if (_.isEmpty(Word)) {
-            res.say(genericSpeech.Pardon).reprompt(genericSpeech.RePrompt).shouldEndSession(false);
-            return true;
-        } else {
-            if (word.RootWord === Word && word.LoadedDefinition &&
-                (word.Definitions.length > 0 || (word.Definitions.length === 0 && word.LoadedSecondary))){
-                return Reply();
+        if (_.isEmpty(Operation)) {
+            Operation = customSlots.Slots[ 0 ];
+        }
+        else {
+            var tempOp = null;
+            for (var op in customSlots.Slots) {
+                if (customSlots.Slots[ op ].indexOf(Operation) !== -1) {
+                    tempOp = customSlots.Slots[ op ];
+                    break;
+                }
+            }
+            if (tempOp) {
+                Operation = tempOp;
             }
             else {
-                word = new wordBase.BaseWord();
-                word.RootWord=Word;
-                return fetchWord.Define(word)
-                    .then(function (response) {
-                        word = response;
-                    })
-                    .then(Reply);
+                res.say(genericSpeech.Apologize).reprompt(genericSpeech.Prompt).shouldEndSession(false).send();
+                return;
+            }
+        }
+        
+        if (_.isEmpty(Word)) {
+            res.say(genericSpeech.Pardon).reprompt(genericSpeech.Prompt).shouldEndSession(false);
+            return true;
+        } else {
+            //Define
+            if (Operation === customSlots.Slots[ 0 ]) {
+                if (word.RootWord === Word && word.LoadedDefinition &&
+                    (word.Definitions.length > 0 || (word.Definitions.length === 0 && word.LoadedSecondary))) {
+                    return Response.ReplyDefine(res, word);
+                }
+                else {
+                    word = new wordBase.BaseWord();
+                    word.RootWord = Word;
+                    return fetchWord.Define(word)
+                        .then(function (response) {
+                            word = response;
+                        })
+                        .then(function () {
+                            return Response.ReplyDefine(res, word);
+                        });
+                }
+            }
+            //Example
+            else if (Operation === customSlots.Slots[ 1 ]) {
+                if (word.RootWord === Word && word.LoadedDefinition &&
+                    (word.Definitions.length > 0 || (word.Definitions.length === 0 && word.LoadedSecondary))) {
+                    return Response.ReplyExample(res, word);
+                }
+                else {
+                    word = new wordBase.BaseWord();
+                    word.RootWord = Word;
+                    return fetchWord.Define(word)
+                        .then(function (response) {
+                            word = response;
+                        })
+                        .then(function () {
+                            return Response.ReplyExample(res, word);
+                        });
+                }
+            }
+            else {
+            
             }
         }
     }
 );
+
 
 module.exports = app;
