@@ -39,10 +39,10 @@ var Speech = {
     
     PrintNoneExtra : function (Extra) {
         return _.template(this.NoneExtra)({ Extra : Extra });
-    }
+    },
     
-    /*PrintSingleExtra : function (Word, Extra) {
-        return _.template(this.SingleExtra)({ Extra : Extra, Word : Word.RootWord });
+    PrintSingleExtra : function (Word, Extra) {
+        return _.template(this.SingleExtra)({ Extra : Extra, Word : Word });
     },
     
     PrintMultiExtras : function (Extra, Extras) {
@@ -57,7 +57,7 @@ var Speech = {
             Extra : Extra, Words : Extras.slice(0, Limit).join(', '),
             Count : Extras.length - Limit
         });
-    }*/
+    }
 };
 
 

@@ -4,7 +4,6 @@
 'use strict';
 
 var request = require('request-promise');
-var Set = require('collections/set');
 var _ = require('lodash');
 
 var config = require('./config');
@@ -91,6 +90,9 @@ var Define = function (Word) {
         Word = word;
     }
     
+    if (Word.LoadedDefinition)
+        return DefineSecondary(Word);
+    
     var options = {
         method : 'GET',
         uri : config.DefineUrl + Word.RootWord,
@@ -121,8 +123,8 @@ var ParseExtras = function (data, Word) {
         
         if (sub.relationshipType === 'equivalent' || sub.relationshipType === 'synonym') {
             if (Word.Synonyms)
-                Word.Synonyms.addEach(sub.words);
-            else Word.Synonyms = new Set(sub.words);
+                Word.Synonyms.concat(sub.words);
+            else Word.Synonyms = sub.words;
         }
         if (sub.relationshipType === 'antonym') {
             Word.Antonyms = sub.words;
