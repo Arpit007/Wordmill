@@ -1,6 +1,7 @@
 /**
  * Created by Home Laptop on 12-Jun-17.
  */
+'use strict';
 
 var _ = require('lodash');
 

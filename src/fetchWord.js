@@ -19,7 +19,14 @@ var ParseWord = function (BaseWord, response) {
         for (var i = 0; i < results.length; i++) {
             var meaning = results[ i ];
             
-            if (meaning.headword !== BaseWord.RootWord)
+            var Dictionary;
+            if (meaning.datasets && meaning.datasets.length > 0)
+                Dictionary = meaning.datasets[ 0 ];
+            
+            if (Dictionary && (Dictionary !== 'ldoce5' && Dictionary !== 'lasde' && Dictionary !== 'wordwise' && Dictionary !== 'laad3'))
+                continue;
+            
+            if (meaning.headword !== BaseWord.RootWord && meaning.headword.indexOf(BaseWord.RootWord))
                 continue;
             
             var DefinitionWord = wordBase.BaseDefinition();
@@ -50,13 +57,15 @@ var ParseWord = function (BaseWord, response) {
                 else DefinitionWord.Meaning = sense.definition[ 0 ];
                 
                 var trans_ex = sense.translations;
-                if (trans_ex && trans_ex.length>0)
-                {
-                    trans_ex = trans_ex[0].example;
-                    trans_ex.forEach(function (ex) {
-                        if (ex.text)
-                            DefinitionWord.Example.push(ex.text);
-                    });
+                if (trans_ex && trans_ex.length > 0) {
+                    trans_ex = trans_ex[ 0 ].example;
+                    if (trans_ex instanceof Array) {
+                        trans_ex.forEach(function (ex) {
+                            if (ex.text)
+                                DefinitionWord.Example.push(ex.text);
+                        });
+                    }
+                    else DefinitionWord.Example.push(trans_ex.text);
                 }
                 
                 var example = sense.collocation_examples;
@@ -140,9 +149,6 @@ var ParseExtras = function (data, Word) {
         }
     }
     
-    if (Word.Synonyms)
-        Word.Synonyms = Word.Synonyms.toArray();
-    
     Word.LoadedExtras = true;
     return Word;
 };
@@ -175,7 +181,7 @@ var Extras = function (Word) {
         });
 };
 
-var ParseSecondary = function(BaseWord, data) {
+var ParseSecondary = function (BaseWord, data) {
     for (var x = 0; x < data.length; x++) {
         var sub = data[ x ];
         

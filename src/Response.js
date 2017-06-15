@@ -3,9 +3,9 @@
  */
 'use strict';
 
-var customSlots = require('./customSlots');
-var speech = require('./speech');
-var genericSpeech = require('./genericSpeech');
+var customSlots = require('./speech/customSlots');
+var speech = require('./speech/speech');
+var genericSpeech = require('./speech/genericSpeech');
 
 var Response ={
     ReplyDefine : function (res, word) {

@@ -14,7 +14,8 @@ function wordBase() {
         "Rhymes": [],
         "LoadedDefinition" : false,
         "LoadedSecondary" : false,
-        "LoadedExtras": false
+        "LoadedExtras": false,
+        "Valid" : true
     }
 }
 
