@@ -175,8 +175,7 @@ var Extras = function (Word) {
         });
 };
 
-var ParseSecondary = function(BaseWord, data)
-{
+var ParseSecondary = function(BaseWord, data) {
     for (var x = 0; x < data.length; x++) {
         var sub = data[ x ];
         

@@ -27,19 +27,20 @@ var Speech = {
     Rhyming : 'rhyming word',
     
     PrintNoDefine : function (Word) {
-        return _.template(this.NoDefine)({ Word : Word });
+        return _.template(this.NoDefine)({ Word : Word.RootWord });
     },
     
-    PrintDefine : function (Word) {
-        return _.template(this.DefineWord)({ Word : Word.Word, Definition : Word.Definition });
+    PrintDefine : function (Word, Index) {
+        return _.template(this.DefineWord)({ Word : Word.RootWord, Definition : Word.Definitions[Index].Meaning });
     },
     
-    PrintDefineWithType : function (Word) {
-        return _.template(this.DefineWithType)({ Type : Word.Type, Word : Word.Word, Definition : Word.Definition });
-    },
+    PrintDefineWithType : function (Word, Index) {
+        return _.template(this.DefineWithType)({ Type : Word.Definitions[Index].PartOfSpeech, Word : Word.RootWord,
+            Definition : Word.Definitions[Index].Meaning });
+    }
     
-    PrintSingleExtra : function (Extra, Word) {
-        return _.template(this.SingleExtra)({ Extra : Extra, Word : Word });
+    /*PrintSingleExtra : function (Word, Extra) {
+        return _.template(this.SingleExtra)({ Extra : Extra, Word : Word.RootWord });
     },
     
     PrintMultiExtras : function (Extra, Extras) {
@@ -54,7 +55,7 @@ var Speech = {
             Extra : Extra, Words : Extras.slice(0, Limit).join(', '),
             Count : Extras.length - Limit
         });
-    }
+    }*/
 };
 
 
