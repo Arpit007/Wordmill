@@ -12,11 +12,12 @@ var Speech = {
     NoDefine : 'Sorry, I couldn\'t find its meaning.',
     DefineWord : 'The word ${Word} means ${Definition}.',
     DefineWithType : 'As ${Type}, it means ${Definition}.',
+    MultiDefine : 'It\'s definitions are ${Definition}',
     
     NoneExtra : 'Sorry, couldn\'t find its ${Extra}.',
     SingleExtra : 'It\'s ${Extra} is ${Word}.',
-    MultiExtras : 'Its\'s ${Extra}s are ${Words} and ${LastWord}.',
-    MultiExtrasWithLimit : 'It\'s ${Extra}s are ${Words} and ${Count} more.',
+    MultiExtras : 'Its\'s ${Extra} are ${Words} and ${LastWord}.',
+    MultiExtrasWithLimit : 'It\'s ${Extra} are ${Words} and ${Count} more.',
     
     Synonyms : 'synonym',
     Antonyms : 'antonym',
@@ -58,6 +59,19 @@ var Speech = {
             Extra : Extra, Words : Extras.slice(0, Limit).join(', '),
             Count : Extras.length - Limit
         });
+    },
+    
+    PrintMultiExamples : function (Word, Index) {
+        return Word.Definitions[Index].join(', ');
+    },
+    
+    PrintMultiDefinitions : function (Word) {
+      var arr = [];
+      for (var i in Word.Definitions){
+          if (Word.Definitions[i].Meaning)
+            arr.push(Word.Definitions[i].Meaning);
+      }
+      return _.template(this.MultiDefine)({ Definition : arr.join(', ')});
     }
 };
 

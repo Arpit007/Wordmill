@@ -8,6 +8,7 @@ var BaseOperation = {
         "ROOTWORD" : "SEARCH_TERMS",
         "OPERATION" : "CUSTOM_OPERATIONS"
     },
+    
     'utterances': [
         '{-|OPERATION} {-|ROOTWORD}',
         '{|State|Give|Give me|Tell|Tell me|Say|Say me} {|what is} {|the} {-|OPERATION} {|of} {|the} {|word} {-|ROOTWORD} {|is}',
@@ -18,13 +19,17 @@ var BaseOperation = {
     ]
 };
 
-var Extra = {
+var CursorOperation = {
     'slots': {
-        "EXTRA" : "EXTRA_LIST",
-        "ROOTWORD" : "SEARCH_TERMS"
+        "CDIRECTION" : "CURSOR_DIRECTION",
+        "ROOTWORD" : "SEARCH_TERMS",
+        "OPERATION" : "CUSTOM_OPERATIONS"
     },
-    'utterances': []
+    
+    'utterances': [
+        '{-|CDIRECTION} {|of} {|the} {|-|OPERATION} {|of} {|the} {|word} {|-|ROOTWORD}'
+    ]
 };
 
-
 module.exports.BaseOperation = BaseOperation;
+module.exports.CursorOperation = CursorOperation;

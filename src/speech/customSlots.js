@@ -4,7 +4,7 @@
 'use strict';
 
 var customSlots = {
-    Slots : [
+    baseSlots : [
         "Definitions",
         "Example",
         "Synonyms",
@@ -64,6 +64,7 @@ var customSlots = {
     Antonyms : [
         "antonym",
         "antonyms",
+        "counter",
         "counterterm",
         "opposite"
     ],
@@ -81,10 +82,34 @@ var customSlots = {
     ],
     
     Variants : [
-        "Variant",
-        "Variant",
-        "Variants",
-        "Forms"
+        "variant",
+        "variants",
+        "forms"
+    ],
+    
+    customSlots : [
+        "Next",
+        "Previous",
+        "All"
+    ],
+    
+    Next : [
+        "next",
+        "succeeding",
+        "subsequent"
+    ],
+    
+    Previous : [
+        "previous",
+        "last",
+        "former"
+    ],
+    
+    All : [
+        "complete",
+        "all",
+        "every",
+        "each"
     ]
 };
 

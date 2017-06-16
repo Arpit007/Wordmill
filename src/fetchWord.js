@@ -23,10 +23,10 @@ var ParseWord = function (BaseWord, response) {
             if (meaning.datasets && meaning.datasets.length > 0)
                 Dictionary = meaning.datasets[ 0 ];
             
-            if (Dictionary && (Dictionary !== 'ldoce5' && Dictionary !== 'lasde' && Dictionary !== 'wordwise' && Dictionary !== 'laad3'))
+            if (Dictionary && [ 'ldoce5', 'lasde', 'wordwise', 'laad3', 'laes' ].indexOf(Dictionary) === -1)
                 continue;
             
-            if (meaning.headword !== BaseWord.RootWord && meaning.headword.indexOf(BaseWord.RootWord))
+            if (meaning.headword.indexOf(BaseWord.RootWord) !== 0 && meaning.headword.length > BaseWord.RootWord.length)
                 continue;
             
             var DefinitionWord = wordBase.BaseDefinition();
@@ -130,22 +130,25 @@ var ParseExtras = function (data, Word) {
     for (var x = 0; x < data.length; x++) {
         var sub = data[ x ];
         
-        if (sub.relationshipType === 'equivalent' || sub.relationshipType === 'synonym') {
-            if (Word.Synonyms)
-                Word.Synonyms.concat(sub.words);
-            else Word.Synonyms = sub.words;
-        }
-        if (sub.relationshipType === 'antonym') {
-            Word.Antonyms = sub.words;
-        }
-        if (sub.relationshipType === 'hypernym') {
-            Word.Hypernyms = sub.words;
-        }
-        if (sub.relationshipType === 'variant') {
-            Word.Variants = sub.words;
-        }
-        if (sub.relationshipType === 'rhyme') {
-            Word.Rhymes = sub.words;
+        switch (sub.relationshipType) {
+            case 'equivalent':
+            case 'synonym':
+                if (Word.Synonyms)
+                    Word.Synonyms.concat(sub.words);
+                else Word.Synonyms = sub.words;
+                break;
+            case 'antonym':
+                Word.Antonyms = sub.words;
+                break;
+            case 'hypernym':
+                Word.Hypernyms = sub.words;
+                break;
+            case 'variant':
+                Word.Variants = sub.words;
+                break;
+            case 'rhyme':
+                Word.Rhymes = sub.words;
+                break;
         }
     }
     
@@ -185,7 +188,7 @@ var ParseSecondary = function (BaseWord, data) {
     for (var x = 0; x < data.length; x++) {
         var sub = data[ x ];
         
-        if (sub.word !== BaseWord.RootWord)
+        if (sub.word.indexOf(BaseWord.RootWord) !== 0 && sub.word.length > BaseWord.RootWord.length)
             continue;
         
         var Define = new wordBase.BaseDefinition();
@@ -243,6 +246,5 @@ var DefineSecondary = function (Word) {
 
 module.exports = {
     Define : Define,
-    DefineSecondary : DefineSecondary,
     Extras : Extras
 };

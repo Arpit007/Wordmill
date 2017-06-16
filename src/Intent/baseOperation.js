@@ -17,14 +17,8 @@ var baseOperation = function (req, res) {
         word = req.getSession().get('Word') || new wordBase.BaseWord();
     else word = new wordBase.BaseWord();
     
-    if (!word.Valid)
-        word = new wordBase.BaseWord();
-    
     var Word = req.slot('ROOTWORD');
     var Operation = req.slot('OPERATION');
-    
-    if (word.RootWord && word.RootWord !== Word)
-        word = new wordBase.BaseWord();
     
     if(Operation)
         Operation=Operation.trim().toLowerCase();
@@ -32,14 +26,17 @@ var baseOperation = function (req, res) {
     if(Word)
         Word=Word.trim().toLowerCase();
     
+    if (!word.Valid || (word.RootWord && word.RootWord !== Word))
+        word = new wordBase.BaseWord();
+    
     if (_.isEmpty(Operation)) {
-        Operation = customSlots.Slots[ 0 ];
+        Operation = customSlots.baseSlots[ 0 ];
     }
     else {
         var tempOp = null;
-        for (var op in customSlots.Slots) {
-            if (customSlots[customSlots.Slots[ op ]].indexOf(Operation) !== -1) {
-                tempOp = customSlots.Slots[ op ];
+        for (var op in customSlots.baseSlots) {
+            if (customSlots[customSlots.baseSlots[ op ]].indexOf(Operation) !== -1) {
+                tempOp = customSlots.baseSlots[ op ];
                 break;
             }
         }
@@ -57,7 +54,7 @@ var baseOperation = function (req, res) {
         return true;
     } else {
         //Define
-        if (Operation === customSlots.Slots[ 0 ]) {
+        if (Operation === customSlots.baseSlots[ 0 ]) {
             if (word.RootWord === Word && word.LoadedDefinition &&
                 (word.Definitions.length > 0 || (word.Definitions.length === 0 && word.LoadedSecondary))) {
                 return Response.ReplyDefine(res, word);
@@ -76,7 +73,7 @@ var baseOperation = function (req, res) {
             }
         }
         //Example
-        else if (Operation === customSlots.Slots[ 1 ]) {
+        else if (Operation === customSlots.baseSlots[ 1 ]) {
             if (word.RootWord === Word && word.LoadedDefinition &&
                 (word.Definitions.length > 0 || (word.Definitions.length === 0 && word.LoadedSecondary))) {
                 return Response.ReplyExample(res, word);
