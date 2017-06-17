@@ -20,7 +20,7 @@
   ],
 
   "author": "Arpit Bhatnagar",
-  "license": "ISC",
+  "license": "GPL",
 
   "dependencies": {
     "alexa-app": "^4.0.1",
