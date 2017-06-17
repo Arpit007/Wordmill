@@ -49,6 +49,8 @@ var customSlots = {
     Example : [
         "example",
         "examples",
+        "sentence",
+        "sentences",
         "uses",
         "precedent",
         "instance",

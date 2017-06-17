@@ -61,9 +61,6 @@ var Speech = {
         });
     },
     
-    PrintMultiExamples : function (Word, Index) {
-        return Word.Definitions[Index].join(', ');
-    },
     
     PrintMultiDefinitions : function (Word) {
       var arr = [];

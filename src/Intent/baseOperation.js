@@ -26,7 +26,7 @@ var baseOperation = function (req, res) {
     if(Word)
         Word=Word.trim().toLowerCase();
     
-    if (!word.Valid || (word.RootWord && word.RootWord !== Word))
+    if (!word.Valid || ( word.RootWord && !_.isEmpty(Word) && word.RootWord !== Word))
         word = new wordBase.BaseWord();
     
     if (_.isEmpty(Operation)) {
@@ -49,63 +49,55 @@ var baseOperation = function (req, res) {
         }
     }
     
-    if (_.isEmpty(Word)) {
+    if (_.isEmpty(Word) && _.isEmpty(word.RootWord)) {
         res.say(genericSpeech.Pardon).reprompt(genericSpeech.Prompt).shouldEndSession(false);
         return true;
     } else {
+        
+        if (_.isEmpty(word.RootWord))
+            word.RootWord = Word;
         //Define
         if (Operation === customSlots.baseSlots[ 0 ]) {
-            if (word.RootWord === Word && word.LoadedDefinition &&
-                (word.Definitions.length > 0 || (word.Definitions.length === 0 && word.LoadedSecondary))) {
+            if (word.LoadedDefinition && (word.Definitions.length > 0 ||  word.LoadedSecondary)) {
                 return Response.ReplyDefine(res, word);
             }
             else {
-                word.RootWord = Word;
                 return fetchWord.Define(word)
-                    .then(function (response) {
-                        word = response;
+                    .then(function (load) {
+                        word = load;
+                        Response.ReplyDefine(res, word);
                         if (req.hasSession())
                             req.getSession().set('Word',word);
-                    })
-                    .then(function () {
-                        return Response.ReplyDefine(res, word);
                     });
             }
         }
         //Example
         else if (Operation === customSlots.baseSlots[ 1 ]) {
-            if (word.RootWord === Word && word.LoadedDefinition &&
-                (word.Definitions.length > 0 || (word.Definitions.length === 0 && word.LoadedSecondary))) {
+            if (word.LoadedDefinition && (word.Definitions.length > 0 ||  word.LoadedSecondary)) {
                 return Response.ReplyExample(res, word);
             }
             else {
-                word.RootWord = Word;
                 return fetchWord.Define(word)
-                    .then(function (response) {
-                        word = response;
+                    .then(function (load) {
+                        word = load;
+                        Response.ReplyExample(res, word);
                         if (req.hasSession())
                             req.getSession().set('Word',word);
-                    })
-                    .then(function () {
-                        return Response.ReplyExample(res, word);
                     });
             }
         }
         //Extras
         else {
-            if (word.RootWord === Word && word.LoadedSecondary) {
+            if (word.LoadedSecondary) {
                 return Response.ReplyExtra(res, word, Operation);
             }
             else {
-                word.RootWord = Word;
                 return fetchWord.Extras(word)
-                    .then(function (response) {
-                        word = response;
+                    .then(function (load) {
+                        word = load;
+                        Response.ReplyExtra(res, word, Operation);
                         if (req.hasSession())
                             req.getSession().set('Word',word);
-                    })
-                    .then(function () {
-                        return Response.ReplyExtra(res, word, Operation);
                     });
             }
         }

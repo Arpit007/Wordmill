@@ -19,9 +19,6 @@ var cursorOperation = function (req, res) {
         word = req.getSession().get('Word') || new wordBase.BaseWord();
     else word = new wordBase.BaseWord();
     
-    if (!word.Valid)
-        word = new wordBase.BaseWord();
-    
     var Word = req.slot('ROOTWORD');
     var Operation = req.slot('OPERATION');
     var Cursor = req.slot('CDIRECTION') || req.CDIRECTION;
@@ -59,7 +56,7 @@ var cursorOperation = function (req, res) {
     }
     
     if (_.isEmpty(Cursor)) {
-        Cursor = customSlots.customSlots[ 0 ];
+        Cursor = customSlots.customSlots[ 2 ];
     }
     else {
         var tempCursor = null;
@@ -81,25 +78,21 @@ var cursorOperation = function (req, res) {
     var DefineReply = function () {
         if (Cursor === customSlots.customSlots[ 0 ]) {
             if (word[ customSlots.baseSlots[ 0 ] + "Ptr" ])
-                word[ customSlots.baseSlots[ 0 ] + "Ptr" ] = (word[ customSlots.baseSlots[ 0 ] + "Ptr" ] - 1) % word.Definitions.length;
-            else word[ customSlots.baseSlots[ 0 ] + "Ptr" ] = word.Definitions.length - 1;
-            
-            if (req.hasSession())
-                req.getSession().set('Word', word);
-            
-            return res.say(speech.PrintMultiDefinitions(word)).shouldEndSession(false);
-        } else if (Cursor === customSlots.customSlots[ 1 ]) {
-            if (word[ customSlots.baseSlots[ 0 ] + "Ptr" ])
                 word[ customSlots.baseSlots[ 0 ] + "Ptr" ] = (word[ customSlots.baseSlots[ 0 ] + "Ptr" ] + 1) % word.Definitions.length;
             else word[ customSlots.baseSlots[ 0 ] + "Ptr" ] = 1;
             
-            if (req.hasSession())
-                req.getSession().set('Word', word);
-            
-            return res.say(speech.PrintMultiDefinitions(word)).shouldEndSession(false);
+            return Response.ReplyDefine(res, word);
+    
+        } else if (Cursor === customSlots.customSlots[ 1 ]) {
+            if (word[ customSlots.baseSlots[ 0 ] + "Ptr" ])
+                word[ customSlots.baseSlots[ 0 ] + "Ptr" ] = (word[ customSlots.baseSlots[ 0 ] + "Ptr" ] - 1) % word.Definitions.length;
+            else word[ customSlots.baseSlots[ 0 ] + "Ptr" ] = word.Definitions.length - 1;
+    
+            return Response.ReplyDefine(res, word);
+    
         }
         else if (Cursor === customSlots.customSlots[ 2 ]) {
-            return res.say(speech.PrintMultiDefinitions(word)).shouldEndSession(false);
+            return res.PersistentSay(speech.PrintMultiDefinitions(word)).shouldEndSession(false);
         }
     };
     
@@ -107,76 +100,80 @@ var cursorOperation = function (req, res) {
         res.say(genericSpeech.Pardon).reprompt(genericSpeech.Prompt).shouldEndSession(false);
         return true;
     } else {
+    
+        if (_.isEmpty(word.RootWord))
+            word.RootWord = Word;
+        
         //Define
         if (Operation === customSlots.baseSlots[ 0 ]) {
-            if (word.RootWord === Word && word.LoadedDefinition &&
-                (word.Definitions.length > 0 || (word.Definitions.length === 0 && word.LoadedSecondary))) {
-                return DefineReply();
+            if (word.LoadedDefinition && (word.Definitions.length > 0 ||  word.LoadedSecondary)) {
+                DefineReply();
+                if (req.hasSession())
+                    req.getSession().set('Word',word);
             }
             else {
-                if (!_.isEmpty(Word))
-                    word.RootWord = Word;
-                
                 return fetchWord.Define(word)
                     .then(function (response) {
                         word = response;
-                    })
-                    .then(function () {
-                        return DefineReply();
+                        DefineReply();
+                        if (req.hasSession())
+                            req.getSession().set('Word',word);
                     });
             }
         }
         //Example
         else if (Operation === customSlots.baseSlots[ 1 ]) {
-            if (word.RootWord === Word && word.LoadedDefinition &&
-                (word.Definitions.length > 0 || (word.Definitions.length === 0 && word.LoadedSecondary))) {
-                if (Cursor === customSlots.customSlots[ 2 ])
-                    return res.say(speech.PrintMultiExamples(word, 0)).shouldEndSession(false);
+            
+            //Relaxing the Build
+            Cursor = customSlots.customSlots[ 2 ];
+            
+            if (word.LoadedDefinition && (word.Definitions.length > 0 ||  word.LoadedSecondary)) {
+                //if (Cursor === customSlots.customSlots[ 2 ])
+                    return res.PersistentSay(Response.PrintMultiExamples(word)).shouldEndSession(false);
+                //else res.say(genericSpeech.Apologize).reprompt(genericSpeech.Prompt).shouldEndSession(false).send();
             }
             else {
-                if (Cursor !== customSlots.customSlots[ 2 ]) {
+                /*if (Cursor !== customSlots.customSlots[ 2 ]) {
                     res.say(genericSpeech.Apologize).reprompt(genericSpeech.Prompt).shouldEndSession(false).send();
                     return;
-                }
-                if (!_.isEmpty(Word))
-                    word.RootWord = Word;
+                }*/
                 
                 return fetchWord.Define(word)
                     .then(function (response) {
                         word = response;
+                        res.PersistentSay(Response.PrintMultiExamples(word)).shouldEndSession(false);
                         if (req.hasSession())
                             req.getSession().set('Word', word);
-                        return res.say(speech.PrintMultiExamples(word, 0)).shouldEndSession(false);
                     });
             }
         }
         //Extras
         else {
+    
+            Cursor = customSlots.customSlots[ 2 ];
+            
             if (word.RootWord === Word && word.LoadedSecondary) {
-                if (Cursor === customSlots.customSlots[ 2 ])
-                    return res.say(speech.PrintMultiExtras(Operation, word[ Operation ])).shouldEndSession(false);
+                //if (Cursor === customSlots.customSlots[ 2 ])
+                    return res.PersistentSay(speech.PrintMultiExtras(Operation, word[ Operation ])).shouldEndSession(false);
+                //else res.say(genericSpeech.Apologize).reprompt(genericSpeech.Prompt).shouldEndSession(false).send();
             }
             else {
-                if (Cursor !== customSlots.customSlots[ 2 ]) {
+                /*if (Cursor !== customSlots.customSlots[ 2 ]) {
                     res.say(genericSpeech.Apologize).reprompt(genericSpeech.Prompt).shouldEndSession(false).send();
                     return;
-                }
-                
-                if (!_.isEmpty(Word))
-                    word.RootWord = Word;
+                }*/
                 
                 return fetchWord.Extras(word)
                     .then(function (response) {
                         word = response;
+                        res.PersistentSay(speech.PrintMultiExtras(Operation, word[ Operation ])).shouldEndSession(false);
                         if (req.hasSession())
                             req.getSession().set('Word', word);
-                        return res.say(speech.PrintMultiExtras(Operation, word[ Operation ])).shouldEndSession(false);
                     });
             }
         }
     }
 };
 
-fetchWord.Define('young');
 
 module.exports = cursorOperation;
