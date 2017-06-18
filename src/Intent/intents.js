@@ -10,10 +10,12 @@ var BaseOperation = {
     },
     
     'utterances': [
-        '{-|OPERATION} {-|ROOTWORD}',
+        '{-|OPERATION} {|of} {|the} {-|ROOTWORD}',
+        '{|State|Give|Give me|Tell|Tell me|Say|Say me} {|what} {|are|is} its {-|OPERATION}',
+        '{|State|Give|Give me|Tell|Tell me|Say|Say me|what is} {|the} {-|ROOTWORD} {-|OPERATION}',
         '{|State|Give|Give me|Tell|Tell me|Say|Say me} {|what is} {|the} {-|OPERATION} {|of} {|the} {|word} {-|ROOTWORD} {|is}',
         '{Describe|Explain} {|to me|me} {|the} {|meaning} {|of} {|the} {|word} {-|ROOTWORD}',
-        '{|Give|Give me|Tell|Tell me|Say|Say me} {|the} {|word} {-|ROOTWORD} {|is} {|-|OPERATION} {|as}',
+        '{Describe|Explain} {|to me|me} its meaning',
         '{|Tell|Tell me|Say|Say me} {|something|anything} about {|the} {|word} {-|ROOTWORD}',
         '{|State|Give|Give me|Tell|Tell me|Say|Say me} {|what are} {|the} {-|OPERATION} {|of} {|the} {|word} {-|ROOTWORD}'
     ]
@@ -27,7 +29,8 @@ var CursorOperation = {
     },
     
     'utterances': [
-        '{-|CDIRECTION} {|of} {|the} {|-|OPERATION} {|of} {|the} {|word} {|-|ROOTWORD}'
+        //'{-|CDIRECTION} {|of} {|the} {|-|OPERATION} {|of} {|the} {|word} {|-|ROOTWORD}'
+        '{-|CDIRECTION} {|of} {|the} {-|OPERATION} {|of} {|the} {|word} {-|ROOTWORD}'
     ]
 };
 

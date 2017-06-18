@@ -50,7 +50,8 @@ var cursorOperation = function (req, res) {
             Operation = tempOp;
         }
         else {
-            res.say(genericSpeech.Apologize).reprompt(genericSpeech.Prompt).shouldEndSession(false).send();
+            console.log('Yu');
+            res.say(genericSpeech.Apologize).reprompt(genericSpeech.Prompt).shouldEndSession(false);
             return;
         }
     }
@@ -70,7 +71,7 @@ var cursorOperation = function (req, res) {
             Cursor = tempCursor;
         }
         else {
-            res.say(genericSpeech.Apologize).reprompt(genericSpeech.Prompt).shouldEndSession(false).send();
+            res.say(genericSpeech.Apologize).reprompt(genericSpeech.Prompt).shouldEndSession(false);
             return;
         }
     }
@@ -130,11 +131,11 @@ var cursorOperation = function (req, res) {
             if (word.LoadedDefinition && (word.Definitions.length > 0 ||  word.LoadedSecondary)) {
                 //if (Cursor === customSlots.customSlots[ 2 ])
                     return res.PersistentSay(Response.PrintMultiExamples(word)).shouldEndSession(false);
-                //else res.say(genericSpeech.Apologize).reprompt(genericSpeech.Prompt).shouldEndSession(false).send();
+                //else res.say(genericSpeech.Apologize).reprompt(genericSpeech.Prompt).shouldEndSession(false);
             }
             else {
                 /*if (Cursor !== customSlots.customSlots[ 2 ]) {
-                    res.say(genericSpeech.Apologize).reprompt(genericSpeech.Prompt).shouldEndSession(false).send();
+                    res.say(genericSpeech.Apologize).reprompt(genericSpeech.Prompt).shouldEndSession(false);
                     return;
                 }*/
                 
@@ -155,11 +156,11 @@ var cursorOperation = function (req, res) {
             if (word.RootWord === Word && word.LoadedSecondary) {
                 //if (Cursor === customSlots.customSlots[ 2 ])
                     return res.PersistentSay(speech.PrintMultiExtras(Operation, word[ Operation ])).shouldEndSession(false);
-                //else res.say(genericSpeech.Apologize).reprompt(genericSpeech.Prompt).shouldEndSession(false).send();
+                //else res.say(genericSpeech.Apologize).reprompt(genericSpeech.Prompt).shouldEndSession(false);
             }
             else {
                 /*if (Cursor !== customSlots.customSlots[ 2 ]) {
-                    res.say(genericSpeech.Apologize).reprompt(genericSpeech.Prompt).shouldEndSession(false).send();
+                    res.say(genericSpeech.Apologize).reprompt(genericSpeech.Prompt).shouldEndSession(false);
                     return;
                 }*/
                 

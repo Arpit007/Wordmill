@@ -26,7 +26,6 @@ var customSlots = {
         "characterise",
         "characterize",
         "characteristics",
-        "something",
         "explanation",
         "something",
         "anything"

@@ -21,29 +21,33 @@ app.launch(function (req, res) {
 app.intent('baseOperation', intents.BaseOperation, function (req, res) {
     return Persistence(req, res, require('./src/Intent/baseOperation'));
 });
-//app.intent('baseOperation', intents.BaseOperation, require('./src/Intent/baseOperation'));
+
 app.intent('cursorOperation', intents.CursorOperation, function (req, res) {
     return Persistence(req, res, require('./src/Intent/cursorOperation'));
-});//, require('./src/Intent/cursorOperation'));
+});
+
 app.intent('AMAZON.HelpIntent', function (req, res) {
     return res.say(genericSpeech.Help).shouldEndSession(false);
 });
+
 app.intent('AMAZON.NextIntent', function (req, res) {
     req.CDIRECTION = "Next";
     return require('./src/Intent/cursorOperation')(req, res);
 });
+
 app.intent('AMAZON.PreviousIntent', function (req, res) {
     req.CDIRECTION = "Previous";
     return require('./src/Intent/cursorOperation')(req, res);
 });
+
 app.intent('AMAZON.RepeatIntent', function (req, res) {
     if (req.hasSession()){
         var Reply = req.getSession().get('Message');
         if (_.isEmpty(Reply))
-            return res.say(genericSpeech.Apologize).reprompt(genericSpeech.Prompt).shouldEndSession(false).send();
-        else return res.say(Reply).shouldEndSession(false).send();
+            return res.say(genericSpeech.Apologize).reprompt(genericSpeech.Prompt).shouldEndSession(false);
+        else return res.say(Reply).shouldEndSession(false);
     }
-    else return res.say(genericSpeech.Apologize).reprompt(genericSpeech.Prompt).shouldEndSession(false).send();
+    else return res.say(genericSpeech.Apologize).reprompt(genericSpeech.Prompt).shouldEndSession(false);
 });
 
 function Persistence(req, res, callback) {

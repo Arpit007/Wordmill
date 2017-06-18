@@ -44,7 +44,7 @@ var baseOperation = function (req, res) {
             Operation = tempOp;
         }
         else {
-            res.say(genericSpeech.Apologize).reprompt(genericSpeech.Prompt).shouldEndSession(false).send();
+            res.say(genericSpeech.Apologize).reprompt(genericSpeech.Prompt).shouldEndSession(false);
             return;
         }
     }
