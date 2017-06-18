@@ -129,20 +129,13 @@ var cursorOperation = function (req, res) {
             Cursor = customSlots.customSlots[ 2 ];
             
             if (word.LoadedDefinition && (word.Definitions.length > 0 ||  word.LoadedSecondary)) {
-                //if (Cursor === customSlots.customSlots[ 2 ])
-                    return res.PersistentSay(Response.PrintMultiExamples(word)).shouldEndSession(false);
-                //else res.say(genericSpeech.Apologize).reprompt(genericSpeech.Prompt).shouldEndSession(false);
+                return Response.PrintMultiExamples(res, word);
             }
             else {
-                /*if (Cursor !== customSlots.customSlots[ 2 ]) {
-                    res.say(genericSpeech.Apologize).reprompt(genericSpeech.Prompt).shouldEndSession(false);
-                    return;
-                }*/
-                
                 return fetchWord.Define(word)
                     .then(function (response) {
                         word = response;
-                        res.PersistentSay(Response.PrintMultiExamples(word)).shouldEndSession(false);
+                        Response.PrintMultiExamples(res, word);
                         if (req.hasSession())
                             req.getSession().set('Word', word);
                     });
@@ -150,20 +143,14 @@ var cursorOperation = function (req, res) {
         }
         //Extras
         else {
-    
+            
+            //Relaxing the Build
             Cursor = customSlots.customSlots[ 2 ];
             
             if (word.RootWord === Word && word.LoadedSecondary) {
-                //if (Cursor === customSlots.customSlots[ 2 ])
                     return res.PersistentSay(speech.PrintMultiExtras(Operation, word[ Operation ])).shouldEndSession(false);
-                //else res.say(genericSpeech.Apologize).reprompt(genericSpeech.Prompt).shouldEndSession(false);
             }
             else {
-                /*if (Cursor !== customSlots.customSlots[ 2 ]) {
-                    res.say(genericSpeech.Apologize).reprompt(genericSpeech.Prompt).shouldEndSession(false);
-                    return;
-                }*/
-                
                 return fetchWord.Extras(word)
                     .then(function (response) {
                         word = response;

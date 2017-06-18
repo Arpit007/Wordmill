@@ -17,7 +17,7 @@ var Speech = {
     NoneExtra : 'Sorry, couldn\'t find its ${Extra}.',
     SingleExtra : 'It\'s ${Extra} is ${Word}.',
     MultiExtras : 'Its\'s ${Extra} are ${Words} and ${LastWord}.',
-    MultiExtrasWithLimit : 'It\'s ${Extra} are ${Words} and ${Count} more.',
+    MultiExtrasWithLimit : "It\'s ${Extra} are ${Words} and ${Count} more.",
     
     Synonyms : 'synonym',
     Antonyms : 'antonym',

@@ -6,7 +6,7 @@
 var _ = require('lodash');
 
 var Speech = {
-    Welcome : 'Welcome to ${appName}.',
+    Welcome : 'Welcome to ${appName}, your smart dictionary.',
     Pardon : 'I couldn\'t get it, please try again',
     Apologize : 'Sorry, please try again.',
     Prompt : 'Ask me any word\'s meaning, synonym, antonym, variants, rhyming words etc.',

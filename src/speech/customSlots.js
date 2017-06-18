@@ -110,7 +110,8 @@ var customSlots = {
         "complete",
         "all",
         "every",
-        "each"
+        "each",
+        "some"
     ]
 };
 

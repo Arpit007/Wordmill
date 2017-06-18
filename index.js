@@ -15,11 +15,18 @@ var intents = require('./src/Intent/intents');
 var app = new Alexa.app(global.appName);
 
 app.launch(function (req, res) {
+    if (req.hasSession()) {
+        req.getSession().clear();
+    }
     res.say(genericSpeech.PrintWelcome()).reprompt(genericSpeech.Prompt).shouldEndSession(false);
 });
 
 app.intent('baseOperation', intents.BaseOperation, function (req, res) {
-    return Persistence(req, res, require('./src/Intent/baseOperation'));
+    var rootWord = req.slot('ROOTWORD');
+    if (!_.isEmpty(rootWord) && rootWord.substr(rootWord.length-1,1) === 's')
+        return Persistence(req, res, require('./src/Intent/cursorOperation'));
+    else
+        return Persistence(req, res, require('./src/Intent/baseOperation'));
 });
 
 app.intent('cursorOperation', intents.CursorOperation, function (req, res) {
@@ -32,12 +39,12 @@ app.intent('AMAZON.HelpIntent', function (req, res) {
 
 app.intent('AMAZON.NextIntent', function (req, res) {
     req.CDIRECTION = "Next";
-    return require('./src/Intent/cursorOperation')(req, res);
+    return Persistence(req, res, require('./src/Intent/cursorOperation'));
 });
 
 app.intent('AMAZON.PreviousIntent', function (req, res) {
     req.CDIRECTION = "Previous";
-    return require('./src/Intent/cursorOperation')(req, res);
+    return Persistence(req, res, require('./src/Intent/cursorOperation'));
 });
 
 app.intent('AMAZON.RepeatIntent', function (req, res) {

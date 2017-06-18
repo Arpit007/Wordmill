@@ -3,6 +3,7 @@
  */
 'use strict';
 
+var _ = require('lodash');
 var customSlots = require('./speech/customSlots');
 var speech = require('./speech/speech');
 var genericSpeech = require('./speech/genericSpeech');
@@ -18,7 +19,7 @@ var Response ={
             res.PersistentSay(Result).shouldEndSession(false);
             res.card({
                 type: "Simple",
-                title: word.RootWord,
+                title: _.capitalize(word.RootWord),
                 content: word.Definitions[Index].Meaning
             });
         }
@@ -30,11 +31,11 @@ var Response ={
             res.PersistentSay(speech.NoneExtra("example")).reprompt(genericSpeech.Prompt).shouldEndSession(false);
         }
         else {
-            var Result = word.Definitions[rootIndex].Example[0];
+            var Result = 'It\'s example is ' + word.Definitions[rootIndex].Example[0];
             res.PersistentSay(Result).shouldEndSession(false);
             res.card({
                 type: "Simple",
-                title: word.RootWord + '\n Example',
+                title: _.capitalize(word.RootWord) + '\n Example',
                 content:word.Definitions[rootIndex].Example[0]
             });
         }
@@ -56,19 +57,24 @@ var Response ={
         }
         res.card({
             type: "Simple",
-            title: word.RootWord + '\n' + Extra.substr(0,Extra.length - 1),
+            title: _.capitalize(word.RootWord) + '\n' + Extra.substr(0,Extra.length - 1),
             content:Extras.slice(0, Extras.length - 1).join(', ')
         });
     },
     
-    PrintMultiExamples : function (Word) {
+    PrintMultiExamples : function (res, Word) {
         var Index = Word[customSlots.baseSlots[0] + "Ptr"] || 0;
         res.card({
             type: "Simple",
-            title: word.RootWord + '\n Examples',
+            title: _.capitalize(word.RootWord) + '\n Examples',
             content:Word.Definitions[Index].Example.join('\n')
         });
-        return Word.Definitions[Index].Example.join(', ');
+        var Response = Word.Definitions[Index].Example.join(', ');
+        if (Word.Definitions[Index].Example.length === 1)
+            Response = 'It\'s example is ' + Response;
+        else Response = 'It\'s examples are ' + Response;
+        
+        res.PersistentSay(Response).shouldEndSession(false);
     }
 };
 

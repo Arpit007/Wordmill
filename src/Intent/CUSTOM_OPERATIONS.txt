@@ -4,6 +4,7 @@ describe
 definition
 means
 meaning
+meanings
 significance
 explain
 characterise
@@ -36,6 +37,7 @@ specimen
 model
 illustrate
 illustration
+illustrations
 exemplify
 antonym
 antonyms
