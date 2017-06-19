@@ -131,9 +131,7 @@ var ParseExtras = function (data, Word) {
         switch (sub.relationshipType) {
             case 'equivalent':
             case 'synonym':
-                if (Word.Synonyms)
-                    Word.Synonyms.concat(sub.words);
-                else Word.Synonyms = sub.words || [];
+                Word.Synonyms = Word.Synonyms.concat(sub.words);
                 break;
             case 'antonym':
                 Word.Antonyms = sub.words || [];

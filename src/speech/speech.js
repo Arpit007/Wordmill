@@ -29,7 +29,8 @@ var Speech = {
     
     PrintDefineWithType : function (Word, Index) {
         return new SSML().say('As').emphasis('strong',Word.Definitions[Index].PartOfSpeech).say('the word')
-            .emphasis('strong', Word.RootWord).say('means').pauseByStrength('strong').prosody({rate:'90%'},Word.Definitions[Index].Meaning).ssml();
+            .emphasis('strong', Word.RootWord).say('means').pauseByStrength('strong')
+            .prosody({rate:'90%'},Word.Definitions[Index].Meaning).ssml();
     },
     
     PrintNoneExtra : function (Extra) {
@@ -37,19 +38,20 @@ var Speech = {
     },
     
     PrintSingleExtra : function (Word, Extra) {
-        return new SSML().say('It\'s '+ Extra + ' is').emphasis('strong', Word).ssml();
+        return new SSML().say(Extra + ' of ' + Word.RootWord + ' is').emphasis('strong', Word).ssml();
     },
     
     PrintMultiExtras : function (Extra, Extras) {
         var Words = Extras.slice(0, Extras.length - 1).join(', ');
         var LastWord = Extras[ Extras.length - 1 ];
-        return new SSML().say('It\'s ' + Extra + ' are').prosody({rate:'85%'},Words).say('and').prosody({rate:'85%'},LastWord).ssml();
+        return new SSML().say(Extra + ' of ' + Word.RootWord + ' are').prosody({rate:'85%'},Words).say('and')
+            .prosody({rate:'85%'},LastWord).ssml();
     },
     
     PrintMultiExtrasWithLimit : function (Extra, Extras, Limit) {
         var Words = Extras.slice(0, Limit).join(', ');
         var Count = Extras.length - Limit;
-        return new SSML().say('It\'s ' + Extra + ' are').prosody({rate:'85%'},Words).say('and').emphasis('strong', Count).say('more').ssml();
+        return new SSML().say(Extra + ' of ' + Word.RootWord + ' are').prosody({rate:'85%'},Words).say('and').emphasis('strong', Count).say('more').ssml();
     },
     
     

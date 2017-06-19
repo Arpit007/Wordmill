@@ -44,13 +44,13 @@ var baseOperation = function (req, res) {
             Operation = tempOp;
         }
         else {
-            res.say(genericSpeech.Apologize).reprompt(genericSpeech.Prompt).shouldEndSession(false);
+            res.say(genericSpeech.PrintPardon()).reprompt(genericSpeech.PrintPrompt()).shouldEndSession(false);
             return;
         }
     }
     
     if (_.isEmpty(Word) && _.isEmpty(word.RootWord)) {
-        res.say(genericSpeech.Pardon).reprompt(genericSpeech.Prompt).shouldEndSession(false);
+        res.say(genericSpeech.PrintPardon()).reprompt(genericSpeech.PrintPrompt()).shouldEndSession(false);
         return true;
     } else {
         

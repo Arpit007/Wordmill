@@ -13,7 +13,7 @@ var genericSpeech = require('./speech/genericSpeech');
 var Response ={
     ReplyDefine : function (res, word) {
         if (word.Definitions.length === 0) {
-            res.PersistentSay(speech.PrintNoDefine(word)).reprompt(genericSpeech.Prompt).shouldEndSession(false);
+            res.PersistentSay(speech.PrintNoDefine(word)).reprompt(genericSpeech.PrintPrompt()).shouldEndSession(false);
         }
         else {
             var Index = word[customSlots.baseSlots[0] + "Ptr"] || 0;
@@ -29,7 +29,7 @@ var Response ={
     ReplyExample : function (res, word) {
         var rootIndex = word[customSlots.baseSlots[0] + "Ptr"] || 0;
         if (word.Definitions.length + 1 < rootIndex ||  word.Definitions[rootIndex].Example.length === 0) {
-            res.PersistentSay(speech.PrintNoneExtra("example")).reprompt(genericSpeech.Prompt).shouldEndSession(false);
+            res.PersistentSay(speech.PrintNoneExtra("example")).reprompt(genericSpeech.PrintPrompt()).shouldEndSession(false);
         }
         else {
             var speak = new SSML();

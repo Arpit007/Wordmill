@@ -51,7 +51,7 @@ var cursorOperation = function (req, res) {
         }
         else {
             console.log('Yu');
-            res.say(genericSpeech.Apologize).reprompt(genericSpeech.Prompt).shouldEndSession(false);
+            res.say(genericSpeech.PrintPardon()).reprompt(genericSpeech.PrintPrompt()).shouldEndSession(false);
             return;
         }
     }
@@ -71,7 +71,7 @@ var cursorOperation = function (req, res) {
             Cursor = tempCursor;
         }
         else {
-            res.say(genericSpeech.Apologize).reprompt(genericSpeech.Prompt).shouldEndSession(false);
+            res.say(genericSpeech.PrintPardon()).reprompt(genericSpeech.PrintPrompt()).shouldEndSession(false);
             return;
         }
     }
@@ -98,7 +98,7 @@ var cursorOperation = function (req, res) {
     };
     
     if (_.isEmpty(Word) && _.isEmpty(word.RootWord)) {
-        res.say(genericSpeech.Pardon).reprompt(genericSpeech.Prompt).shouldEndSession(false);
+        res.say(genericSpeech.PrintPardon()).reprompt(genericSpeech.PrintPrompt()).shouldEndSession(false);
         return true;
     } else {
     

@@ -21,7 +21,7 @@ app.launch(function (req, res) {
     if (req.hasSession()) {
         req.getSession().clear();
     }
-    res.say(genericSpeech.PrintWelcome()).reprompt(genericSpeech.Prompt).shouldEndSession(false);
+    res.say(genericSpeech.PrintWelcome()).reprompt(genericSpeech.PrintPrompt()).shouldEndSession(false);
 });
 
 app.intent('baseOperation', intents.BaseOperation, function (req, res) {
@@ -37,7 +37,7 @@ app.intent('cursorOperation', intents.CursorOperation, function (req, res) {
 });
 
 app.intent('AMAZON.HelpIntent', function (req, res) {
-    return res.say(genericSpeech.Help).shouldEndSession(false);
+    return res.say(genericSpeech.PrintHelp()).shouldEndSession(false);
 });
 
 app.intent('AMAZON.NextIntent', function (req, res) {
@@ -54,10 +54,10 @@ app.intent('AMAZON.RepeatIntent', function (req, res) {
     if (req.hasSession()){
         var Reply = req.getSession().get('Message');
         if (_.isEmpty(Reply))
-            return res.say(genericSpeech.Apologize).reprompt(genericSpeech.Prompt).shouldEndSession(false);
+            return res.say(genericSpeech.PrintPardon()).reprompt(genericSpeech.PrintPrompt()).shouldEndSession(false);
         else return res.say(Reply).shouldEndSession(false);
     }
-    else return res.say(genericSpeech.Apologize).reprompt(genericSpeech.Prompt).shouldEndSession(false);
+    else return res.say(genericSpeech.PrintPardon()).reprompt(genericSpeech.PrintPrompt()).shouldEndSession(false);
 });
 
 function Persistence(req, res, callback) {
