@@ -3,21 +3,13 @@
  */
 'use strict';
 
+module.change_code = 1;
+
 var _ = require('lodash');
+var SSML = require('ssml-builder');
 
 var Speech = {
     NoWord : 'Please specify the word',
-    Done : 'Sorry, That\'s all I know',
-    
-    NoDefine : 'Sorry, I couldn\'t find its meaning.',
-    DefineWord : 'The word ${Word} means ${Definition}.',
-    DefineWithType : 'As ${Type}, it means ${Definition}.',
-    MultiDefine : 'It\'s definitions are ${Definition}',
-    
-    NoneExtra : 'Sorry, couldn\'t find its ${Extra}.',
-    SingleExtra : 'It\'s ${Extra} is ${Word}.',
-    MultiExtras : 'Its\'s ${Extra} are ${Words} and ${LastWord}.',
-    MultiExtrasWithLimit : "It\'s ${Extra} are ${Words} and ${Count} more.",
     
     Synonyms : 'synonym',
     Antonyms : 'antonym',
@@ -27,48 +19,50 @@ var Speech = {
     Rhyming : 'rhyming word',
     
     PrintNoDefine : function (Word) {
-        return _.template(this.NoDefine)({ Word : Word.RootWord });
+        return new SSML().say('Sorry,').pauseByStrength('strong').say('I couldn\'t find its meaning').ssml();
     },
     
     PrintDefine : function (Word, Index) {
-        return _.template(this.DefineWord)({ Word : Word.RootWord, Definition : Word.Definitions[Index].Meaning });
+        return new SSML().say('The word').emphasis('strong', Word.RootWord).say('means').pauseByStrength('strong')
+            .prosody({rate:'90%'},Word.Definitions[Index].Meaning).ssml();
     },
     
     PrintDefineWithType : function (Word, Index) {
-        return _.template(this.DefineWithType)({ Type : Word.Definitions[Index].PartOfSpeech, Word : Word.RootWord,
-            Definition : Word.Definitions[Index].Meaning });
+        return new SSML().say('As').emphasis('strong',Word.Definitions[Index].PartOfSpeech).say('the word')
+            .emphasis('strong', Word.RootWord).say('means').pauseByStrength('strong').prosody({rate:'90%'},Word.Definitions[Index].Meaning).ssml();
     },
     
     PrintNoneExtra : function (Extra) {
-        return _.template(this.NoneExtra)({ Extra : Extra });
+        return new SSML().say('Sorry,').pauseByStrength('strong').say('I couldn\'t find its ' + Extra).ssml();
     },
     
     PrintSingleExtra : function (Word, Extra) {
-        return _.template(this.SingleExtra)({ Extra : Extra, Word : Word });
+        return new SSML().say('It\'s '+ Extra + ' is').emphasis('strong', Word).ssml();
     },
     
     PrintMultiExtras : function (Extra, Extras) {
-        return _.template(this.MultiExtras)({
-            Extra : Extra, Words : Extras.slice(0, Extras.length - 1).join(', '),
-            LastWord : Extras[ Extras.length - 1 ]
-        });
+        var Words = Extras.slice(0, Extras.length - 1).join(', ');
+        var LastWord = Extras[ Extras.length - 1 ];
+        return new SSML().say('It\'s ' + Extra + ' are').prosody({rate:'85%'},Words).say('and').prosody({rate:'85%'},LastWord).ssml();
     },
     
     PrintMultiExtrasWithLimit : function (Extra, Extras, Limit) {
-        return _.template(this.MultiExtrasWithLimit)({
-            Extra : Extra, Words : Extras.slice(0, Limit).join(', '),
-            Count : Extras.length - Limit
-        });
+        var Words = Extras.slice(0, Limit).join(', ');
+        var Count = Extras.length - Limit;
+        return new SSML().say('It\'s ' + Extra + ' are').prosody({rate:'85%'},Words).say('and').emphasis('strong', Count).say('more').ssml();
     },
     
     
     PrintMultiDefinitions : function (Word) {
-      var arr = [];
+        var speech = new SSML();
+        speech.say('It\'s definitions are ');
       for (var i in Word.Definitions){
-          if (Word.Definitions[i].Meaning)
-            arr.push(Word.Definitions[i].Meaning);
+          if (Word.Definitions[i].Meaning) {
+              speech.paragraph(Word.Definitions[ i ].Meaning);
+              speech.pauseByStrength('medium');
+          }
       }
-      return _.template(this.MultiDefine)({ Definition : arr.join(', ')});
+      return speech.ssml();
     }
 };
 

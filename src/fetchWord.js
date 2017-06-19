@@ -125,8 +125,6 @@ var Define = function (Word) {
 };
 
 var ParseExtras = function (data, Word) {
-    Word.Synonyms = null;
-    
     for (var x = 0; x < data.length; x++) {
         var sub = data[ x ];
         
@@ -135,23 +133,24 @@ var ParseExtras = function (data, Word) {
             case 'synonym':
                 if (Word.Synonyms)
                     Word.Synonyms.concat(sub.words);
-                else Word.Synonyms = sub.words;
+                else Word.Synonyms = sub.words || [];
                 break;
             case 'antonym':
-                Word.Antonyms = sub.words;
+                Word.Antonyms = sub.words || [];
                 break;
             case 'hypernym':
-                Word.Hypernyms = sub.words;
+                Word.Hypernyms = sub.words || [];
                 break;
             case 'variant':
-                Word.Variants = sub.words;
+                Word.Variants = sub.words || [];
                 break;
             case 'rhyme':
-                Word.Rhymes = sub.words;
+                Word.Rhymes = sub.words || [];
                 break;
         }
     }
     
+    console.log(JSON.stringify(Word));
     Word.LoadedExtras = true;
     return Word;
 };

@@ -12,6 +12,9 @@ var config = require('./src/config');
 var genericSpeech = require('./src/speech/genericSpeech');
 var intents = require('./src/Intent/intents');
 
+var baseOperation = require('./src/Intent/baseOperation');
+var cursorOperation = require('./src/Intent/cursorOperation');
+
 var app = new Alexa.app(global.appName);
 
 app.launch(function (req, res) {
@@ -24,13 +27,13 @@ app.launch(function (req, res) {
 app.intent('baseOperation', intents.BaseOperation, function (req, res) {
     var rootWord = req.slot('ROOTWORD');
     if (!_.isEmpty(rootWord) && rootWord.substr(rootWord.length-1,1) === 's')
-        return Persistence(req, res, require('./src/Intent/cursorOperation'));
+        return Persistence(req, res, cursorOperation);
     else
-        return Persistence(req, res, require('./src/Intent/baseOperation'));
+        return Persistence(req, res, baseOperation);
 });
 
 app.intent('cursorOperation', intents.CursorOperation, function (req, res) {
-    return Persistence(req, res, require('./src/Intent/cursorOperation'));
+    return Persistence(req, res, cursorOperation);
 });
 
 app.intent('AMAZON.HelpIntent', function (req, res) {
@@ -39,12 +42,12 @@ app.intent('AMAZON.HelpIntent', function (req, res) {
 
 app.intent('AMAZON.NextIntent', function (req, res) {
     req.CDIRECTION = "Next";
-    return Persistence(req, res, require('./src/Intent/cursorOperation'));
+    return Persistence(req, res, cursorOperation);
 });
 
 app.intent('AMAZON.PreviousIntent', function (req, res) {
     req.CDIRECTION = "Previous";
-    return Persistence(req, res, require('./src/Intent/cursorOperation'));
+    return Persistence(req, res, cursorOperation);
 });
 
 app.intent('AMAZON.RepeatIntent', function (req, res) {

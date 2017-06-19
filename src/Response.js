@@ -4,6 +4,8 @@
 'use strict';
 
 var _ = require('lodash');
+var SSML = require('ssml-builder');
+
 var customSlots = require('./speech/customSlots');
 var speech = require('./speech/speech');
 var genericSpeech = require('./speech/genericSpeech');
@@ -15,8 +17,7 @@ var Response ={
         }
         else {
             var Index = word[customSlots.baseSlots[0] + "Ptr"] || 0;
-            var Result = speech.PrintDefine(word, Index);
-            res.PersistentSay(Result).shouldEndSession(false);
+            res.PersistentSay(speech.PrintDefine(word, Index)).shouldEndSession(false);
             res.card({
                 type: "Simple",
                 title: _.capitalize(word.RootWord),
@@ -28,11 +29,14 @@ var Response ={
     ReplyExample : function (res, word) {
         var rootIndex = word[customSlots.baseSlots[0] + "Ptr"] || 0;
         if (word.Definitions.length + 1 < rootIndex ||  word.Definitions[rootIndex].Example.length === 0) {
-            res.PersistentSay(speech.NoneExtra("example")).reprompt(genericSpeech.Prompt).shouldEndSession(false);
+            res.PersistentSay(speech.PrintNoneExtra("example")).reprompt(genericSpeech.Prompt).shouldEndSession(false);
         }
         else {
-            var Result = 'It\'s example is ' + word.Definitions[rootIndex].Example[0];
-            res.PersistentSay(Result).shouldEndSession(false);
+            var speak = new SSML();
+            speak.say('It\'s example is ');
+            speak.paragraph(word.Definitions[rootIndex].Example[0]);
+            
+            res.PersistentSay(speak.ssml()).shouldEndSession(false);
             res.card({
                 type: "Simple",
                 title: _.capitalize(word.RootWord) + '\n Example',
@@ -66,15 +70,23 @@ var Response ={
         var Index = Word[customSlots.baseSlots[0] + "Ptr"] || 0;
         res.card({
             type: "Simple",
-            title: _.capitalize(word.RootWord) + '\n Examples',
+            title: _.capitalize(Word.RootWord) + '\n Examples',
             content:Word.Definitions[Index].Example.join('\n')
         });
-        var Response = Word.Definitions[Index].Example.join(', ');
-        if (Word.Definitions[Index].Example.length === 1)
-            Response = 'It\'s example is ' + Response;
-        else Response = 'It\'s examples are ' + Response;
+    
+        var speak = new SSML();
         
-        res.PersistentSay(Response).shouldEndSession(false);
+        if (Word.Definitions[Index].Example.length === 1)
+            speak.say('It\'s example is ');
+        else
+            speak.say('It\'s examples are ');
+    
+        for (var i in Word.Definitions[Index].Example){
+            speak.paragraph(Word.Definitions[Index].Example[i]);
+            speak.pauseByStrength('medium');
+        }
+        
+        res.PersistentSay(speak.ssml()).shouldEndSession(false);
     }
 };
 
