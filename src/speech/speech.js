@@ -37,34 +37,22 @@ var Speech = {
         return new SSML().say('Sorry,').pauseByStrength('strong').say('I couldn\'t find its ' + Extra).ssml();
     },
     
-    PrintSingleExtra : function (Word, Extra) {
-        return new SSML().say(Extra + ' of ' + Word.RootWord + ' is').emphasis('strong', Word).ssml();
+    PrintSingleExtra : function (Word, Extras, Extra) {
+        return new SSML().say(Extras + ' of ' + Word.RootWord + ' is').emphasis('strong', Extra).ssml();
     },
     
-    PrintMultiExtras : function (Extra, Extras) {
+    PrintMultiExtras : function (Word, Extra, Extras) {
         var Words = Extras.slice(0, Extras.length - 1).join(', ');
         var LastWord = Extras[ Extras.length - 1 ];
         return new SSML().say(Extra + ' of ' + Word.RootWord + ' are').prosody({rate:'85%'},Words).say('and')
             .prosody({rate:'85%'},LastWord).ssml();
     },
     
-    PrintMultiExtrasWithLimit : function (Extra, Extras, Limit) {
+    PrintMultiExtrasWithLimit : function (Word, Extra, Extras, Limit) {
         var Words = Extras.slice(0, Limit).join(', ');
         var Count = Extras.length - Limit;
-        return new SSML().say(Extra + ' of ' + Word.RootWord + ' are').prosody({rate:'85%'},Words).say('and').emphasis('strong', Count).say('more').ssml();
-    },
-    
-    
-    PrintMultiDefinitions : function (Word) {
-        var speech = new SSML();
-        speech.say('It\'s definitions are ');
-      for (var i in Word.Definitions){
-          if (Word.Definitions[i].Meaning) {
-              speech.paragraph(Word.Definitions[ i ].Meaning);
-              speech.pauseByStrength('medium');
-          }
-      }
-      return speech.ssml();
+        return new SSML().say(Extra + ' of ' + Word.RootWord + ' are').prosody({rate:'85%'},Words).say('and')
+            .emphasis('strong', Count).say('more').ssml();
     }
 };
 

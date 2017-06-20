@@ -25,8 +25,8 @@ app.launch(function (req, res) {
 });
 
 app.intent('baseOperation', intents.BaseOperation, function (req, res) {
-    var rootWord = req.slot('ROOTWORD');
-    if (!_.isEmpty(rootWord) && rootWord.substr(rootWord.length-1,1) === 's')
+    var operation = req.slot('OPERATION');
+    if (!_.isEmpty(operation) && operation.substr(operation.length-1,1) === 's')
         return Persistence(req, res, cursorOperation);
     else
         return Persistence(req, res, baseOperation);

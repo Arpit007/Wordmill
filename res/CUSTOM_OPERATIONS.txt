@@ -2,10 +2,12 @@ define
 defined
 describe
 definition
+definitions
 means
 meaning
 meanings
 significance
+significances
 explain
 characterise
 characterize
@@ -22,6 +24,7 @@ synonymous
 synonyme
 equivalent
 duplicate
+duplicates
 polyonym
 poecilonym
 example
@@ -31,8 +34,10 @@ sentences
 uses
 precedent
 instance
+instances
 case
 sample
+samples
 specimen
 model
 illustrate
@@ -44,9 +49,11 @@ antonyms
 counter
 counterterm
 opposite
+opposites
 hypernym
 hypernyms
 superordinate
+superordinates
 rhyme
 rhyming
 ringing

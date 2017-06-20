@@ -50,7 +50,6 @@ var cursorOperation = function (req, res) {
             Operation = tempOp;
         }
         else {
-            console.log('Yu');
             res.say(genericSpeech.PrintPardon()).reprompt(genericSpeech.PrintPrompt()).shouldEndSession(false);
             return;
         }
@@ -93,7 +92,7 @@ var cursorOperation = function (req, res) {
     
         }
         else if (Cursor === customSlots.customSlots[ 2 ]) {
-            return res.PersistentSay(speech.PrintMultiDefinitions(word)).shouldEndSession(false);
+            return Response.PrintMultiDefinitions(res, word);
         }
     };
     
@@ -124,7 +123,6 @@ var cursorOperation = function (req, res) {
         }
         //Example
         else if (Operation === customSlots.baseSlots[ 1 ]) {
-            
             //Relaxing the Build
             Cursor = customSlots.customSlots[ 2 ];
             
@@ -148,13 +146,15 @@ var cursorOperation = function (req, res) {
             Cursor = customSlots.customSlots[ 2 ];
             
             if (word.RootWord === Word && word.LoadedSecondary) {
-                    return res.PersistentSay(speech.PrintMultiExtras(Operation, word[ Operation ])).shouldEndSession(false);
+                return Response.PrintMultiExtras(res, word, Operation);
             }
             else {
                 return fetchWord.Extras(word)
                     .then(function (response) {
                         word = response;
-                        res.PersistentSay(speech.PrintMultiExtras(Operation, word[ Operation ])).shouldEndSession(false);
+                        
+                        Response.PrintMultiExtras(res, word, Operation);
+                        
                         if (req.hasSession())
                             req.getSession().set('Word', word);
                     });

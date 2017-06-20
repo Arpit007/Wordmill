@@ -148,7 +148,6 @@ var ParseExtras = function (data, Word) {
         }
     }
     
-    console.log(JSON.stringify(Word));
     Word.LoadedExtras = true;
     return Word;
 };

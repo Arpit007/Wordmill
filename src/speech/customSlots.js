@@ -19,9 +19,12 @@ var customSlots = {
         "defined",
         "describe",
         "definition",
+        "definitions",
         "means",
         "meaning",
+        "meanings",
         "significance",
+        "significances",
         "explain",
         "characterise",
         "characterize",
@@ -41,6 +44,7 @@ var customSlots = {
         "synonyme",
         "equivalent",
         "duplicate",
+        "duplicates",
         "polyonym",
         "poecilonym"
     ],
@@ -53,12 +57,15 @@ var customSlots = {
         "uses",
         "precedent",
         "instance",
+        "instances",
         "case",
         "sample",
+        "samples",
         "specimen",
         "model",
         "illustrate",
         "illustration",
+        "illustrations",
         "exemplify"
     ],
     
@@ -67,13 +74,15 @@ var customSlots = {
         "antonyms",
         "counter",
         "counterterm",
-        "opposite"
+        "opposite",
+        "opposites"
     ],
     
     Hypernyms : [
         "hypernym",
         "hypernyms",
-        "superordinate"
+        "superordinate",
+        "superordinates"
     ],
     
     Rhymes : [
