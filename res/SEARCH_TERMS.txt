@@ -2030,7 +2030,6 @@ stitch
 stocking
 stomach
 stone
-stop
 store
 stormy
 story

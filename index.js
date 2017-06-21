@@ -37,7 +37,15 @@ app.intent('cursorOperation', intents.CursorOperation, function (req, res) {
 });
 
 app.intent('AMAZON.HelpIntent', function (req, res) {
-    return res.say(genericSpeech.PrintHelp()).shouldEndSession(false);
+    return res.say(genericSpeech.PrintHelp()).reprompt(genericSpeech.PrintPrompt()).shouldEndSession(false);
+});
+
+app.intent('AMAZON.StopIntent', function (req, res) {
+    return res.say(genericSpeech.GoodBye).shouldEndSession(true);
+});
+
+app.intent('AMAZON.CancelIntent', function (req, res) {
+    return res.say(genericSpeech.GoodBye).shouldEndSession(true);
 });
 
 app.intent('AMAZON.NextIntent', function (req, res) {
@@ -55,7 +63,7 @@ app.intent('AMAZON.RepeatIntent', function (req, res) {
         var Reply = req.getSession().get('Message');
         if (_.isEmpty(Reply))
             return res.say(genericSpeech.PrintPardon()).reprompt(genericSpeech.PrintPrompt()).shouldEndSession(false);
-        else return res.say(Reply).shouldEndSession(false);
+        else return res.say(Reply).reprompt(genericSpeech.PrintPrompt()).shouldEndSession(false);
     }
     else return res.say(genericSpeech.PrintPardon()).reprompt(genericSpeech.PrintPrompt()).shouldEndSession(false);
 });
@@ -64,7 +72,7 @@ function Persistence(req, res, callback) {
     res.PersistentSay = function (Message) {
       if(req.hasSession())
           req.getSession().set('Message', Message);
-      return res.say(Message);
+      return res.say(Message).reprompt(genericSpeech.PrintPrompt()).reprompt(genericSpeech.PrintPrompt()).shouldEndSession(false);
     };
     return callback(req, res);
 }

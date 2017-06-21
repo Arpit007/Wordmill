@@ -3,13 +3,13 @@
  */
 'use strict';
 
-var _ = require('lodash');
 var SSML = require('ssml-builder');
 
 var Speech = {
     Help : 'Ask me a word\'s meaning, its examples, synonyms, hypernyms, antonyms, variants & rhyming words.'
     + ' To know the word\'s other meanings, ask me for the next meaning.'
     + ' To get all information about a particular detail, ask me the same.',
+    GoodBye : 'Good-bye.',
     
     PrintWelcome : function () {
         return new SSML().say('Welcome to ' + appName).pauseByStrength('strong').say('your smart dictionary.').ssml();

@@ -17,7 +17,7 @@ var Response ={
         }
         else {
             var Index = word[customSlots.baseSlots[0] + "Ptr"] || 0;
-            res.PersistentSay(speech.PrintDefine(word, Index)).shouldEndSession(false);
+            res.PersistentSay(speech.PrintDefine(word, Index));
             res.card({
                 type: "Simple",
                 title: _.capitalize(word.RootWord),
@@ -36,7 +36,7 @@ var Response ={
             speak.say('It\'s example is');
             speak.paragraph(word.Definitions[rootIndex].Example[0]);
             
-            res.PersistentSay(speak.ssml()).shouldEndSession(false);
+            res.PersistentSay(speak.ssml());
             res.card({
                 type: "Simple",
                 title: _.capitalize(word.RootWord) + '\n Example',
@@ -48,16 +48,16 @@ var Response ={
     ReplyExtra : function (res, word, Extra) {
         var Extras = word[Extra];
         if (Extras.length === 0){
-            res.say(speech.PrintNoneExtra(Extra.substr(0,Extra.length - 1))).shouldEndSession(false);
+            res.say(speech.PrintNoneExtra(Extra.substr(0,Extra.length - 1))).reprompt(genericSpeech.PrintPrompt()).shouldEndSession(false);
         }
         else if (Extras.length === 1){
-            res.PersistentSay(speech.PrintSingleExtra(word, Extra.substr(0,Extra.length - 1), Extras[0])).shouldEndSession(false);
+            res.PersistentSay(speech.PrintSingleExtra(word, Extra.substr(0,Extra.length - 1), Extras[0]));
         }
         else if (Extras.length === 2){
-            res.PersistentSay(speech.PrintMultiExtras(word, Extra, Extras)).shouldEndSession(false);
+            res.PersistentSay(speech.PrintMultiExtras(word, Extra, Extras));
         }
         else {
-            res.PersistentSay(speech.PrintMultiExtrasWithLimit(word, Extra, Extras, 2)).shouldEndSession(false);
+            res.PersistentSay(speech.PrintMultiExtrasWithLimit(word, Extra, Extras, 2));
         }
         res.card({
             type: "Simple",
@@ -91,13 +91,13 @@ var Response ={
             speak.pauseByStrength('medium');
         }
         
-        res.PersistentSay(speak.ssml()).shouldEndSession(false);
+        res.PersistentSay(speak.ssml());
     },
     
     PrintMultiExtras : function (res, word, Operation) {
         var Extras = word[Operation];
         if (Extras.length === 0){
-            return res.say(speech.PrintNoneExtra(Extra)).shouldEndSession(false);
+            return res.say(speech.PrintNoneExtra(Operation)).reprompt(genericSpeech.PrintPrompt()).shouldEndSession(false);
         }
     
         res.card({
@@ -106,7 +106,7 @@ var Response ={
             content:word[Operation].join('\n')
         });
         
-        return res.PersistentSay(speech.PrintMultiExtras(word, Operation, word[Operation])).shouldEndSession(false);
+        return res.PersistentSay(speech.PrintMultiExtras(word, Operation, word[Operation]));
     },
     
     PrintMultiDefinitions : function (res, Word) {
@@ -122,7 +122,7 @@ var Response ={
                 speak.pauseByStrength('medium');
             }
         }
-        return res.PersistentSay(speak.ssml()).shouldEndSession(false);
+        return res.PersistentSay(speak.ssml());
     }
 };
 

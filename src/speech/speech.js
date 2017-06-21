@@ -5,7 +5,6 @@
 
 module.change_code = 1;
 
-var _ = require('lodash');
 var SSML = require('ssml-builder');
 
 var Speech = {
