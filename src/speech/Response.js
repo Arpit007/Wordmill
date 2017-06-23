@@ -6,9 +6,9 @@
 var _ = require('lodash');
 var SSML = require('ssml-builder');
 
-var customSlots = require('./speech/customSlots');
-var speech = require('./speech/speech');
-var genericSpeech = require('./speech/genericSpeech');
+var customSlots = require('./customSlots');
+var speech = require('./speech');
+var genericSpeech = require('./genericSpeech');
 
 var Response ={
     ReplyDefine : function (res, word) {
@@ -33,10 +33,10 @@ var Response ={
         }
         else {
             var speak = new SSML();
-            speak.say('It\'s example is');
+            speak.say('Example of ' + word.RootWord + ' is');
             speak.paragraph(word.Definitions[rootIndex].Example[0]);
             
-            res.PersistentSay(speak.ssml());
+            res.PersistentSay(speak);
             res.card({
                 type: "Simple",
                 title: _.capitalize(word.RootWord) + '\n Example',
@@ -82,16 +82,16 @@ var Response ={
         var speak = new SSML();
         
         if (Word.Definitions[Index].Example.length === 1)
-            speak.say('It\'s example is');
+            speak.say('Example of ' + Word.RootWord + ' is');
         else
-            speak.say('It\'s examples are');
+            speak.say('Examples of ' + Word.RootWord + ' are');
     
         for (var i in Word.Definitions[Index].Example){
             speak.paragraph(Word.Definitions[Index].Example[i]);
             speak.pauseByStrength('medium');
         }
         
-        res.PersistentSay(speak.ssml());
+        res.PersistentSay(speak);
     },
     
     PrintMultiExtras : function (res, word, Operation) {
@@ -122,7 +122,7 @@ var Response ={
                 speak.pauseByStrength('medium');
             }
         }
-        return res.PersistentSay(speak.ssml());
+        return res.PersistentSay(speak);
     }
 };
 

@@ -7,6 +7,7 @@ module.change_code = 1;
 
 var _ = require('lodash');
 var Alexa = require('alexa-app');
+var SSML = require('ssml-builder');
 
 var config = require('./src/config');
 var genericSpeech = require('./src/speech/genericSpeech');
@@ -21,11 +22,17 @@ app.launch(function (req, res) {
     if (req.hasSession()) {
         req.getSession().clear();
     }
+    console.log('Session At: ' + new Date());
     res.say(genericSpeech.PrintWelcome()).reprompt(genericSpeech.PrintPrompt()).shouldEndSession(false);
 });
 
 app.intent('baseOperation', intents.BaseOperation, function (req, res) {
     var operation = req.slot('OPERATION');
+    
+    if(req.slot('ROOTWORD') && ['goodbye', 'good-bye', 'good bye'].indexOf(req.slot('ROOTWORD').toLowerCase()) !== -1
+        && (!operation || _.isEmpty(operation.trim())))
+        return res.say(genericSpeech.GoodBye).shouldEndSession(true);
+    
     if (!_.isEmpty(operation) && operation.substr(operation.length-1,1) === 's')
         return Persistence(req, res, cursorOperation);
     else
@@ -33,6 +40,12 @@ app.intent('baseOperation', intents.BaseOperation, function (req, res) {
 });
 
 app.intent('cursorOperation', intents.CursorOperation, function (req, res) {
+    var operation = req.slot('OPERATION');
+    
+    if((req.slot('ROOTWORD') && ['goodbye', 'good-bye', 'good bye'].indexOf(req.slot('ROOTWORD').toLowerCase()) !== -1
+        && (!operation || _.isEmpty(operation.trim())))||(['goodbye', 'good-bye', 'good bye'].indexOf(req.slot('CDIRECTION').toLowerCase()) !== -1))
+        return res.say(genericSpeech.GoodBye).shouldEndSession(true);
+    
     return Persistence(req, res, cursorOperation);
 });
 
@@ -70,9 +83,14 @@ app.intent('AMAZON.RepeatIntent', function (req, res) {
 
 function Persistence(req, res, callback) {
     res.PersistentSay = function (Message) {
-      if(req.hasSession())
-          req.getSession().set('Message', Message);
-      return res.say(Message).reprompt(genericSpeech.PrintPrompt()).reprompt(genericSpeech.PrintPrompt()).shouldEndSession(false);
+      if (Message instanceof SSML)
+          Message = Message.pauseByStrength('strong').paragraph(genericSpeech.More).ssml();
+      else Message = Message + genericSpeech.More;
+      
+        if(req.hasSession())
+            req.getSession().set('Message', Message);
+      
+      return res.say(Message).reprompt(genericSpeech.PrintPrompt()).shouldEndSession(false);
     };
     return callback(req, res);
 }
@@ -81,6 +99,7 @@ app.sessionEnded(function (request, response) {
     if (request.hasSession()) {
         request.getSession().clear();
     }
+    return response.say(genericSpeech.GoodBye).shouldEndSession(true);
 });
 
 module.exports = app;

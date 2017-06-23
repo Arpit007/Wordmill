@@ -8,7 +8,7 @@ var _ = require('lodash');
 var fetchWord = require('../fetchWord');
 var genericSpeech = require('../speech/genericSpeech');
 var customSlots = require('../speech/customSlots');
-var Response = require('../Response');
+var Response = require('../speech/Response');
 var wordBase = require('../wordBase');
 var speech = require('../speech/speech');
 
