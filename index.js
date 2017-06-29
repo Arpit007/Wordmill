@@ -9,6 +9,10 @@ var _ = require('lodash');
 var Alexa = require('alexa-app');
 var SSML = require('ssml-builder');
 
+process.on('uncaughtException', function (err) {
+    console.error('Uncaught Error: ' + err.stack);
+});
+
 var config = require('./src/config');
 var genericSpeech = require('./src/speech/genericSpeech');
 var intents = require('./src/Intent/intents');

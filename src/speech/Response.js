@@ -28,7 +28,7 @@ var Response ={
     
     ReplyExample : function (res, word) {
         var rootIndex = word[customSlots.baseSlots[0] + "Ptr"] || 0;
-        if (word.Definitions.length + 1 < rootIndex ||  word.Definitions[rootIndex].Example.length === 0) {
+        if (word.Definitions.length === 0 || word.Definitions.length + 1 < rootIndex ||  word.Definitions[rootIndex].Example.length === 0) {
             res.say(speech.PrintNoneExtra("example")).reprompt(genericSpeech.PrintPrompt()).shouldEndSession(false);
         }
         else {
@@ -69,8 +69,9 @@ var Response ={
     PrintMultiExamples : function (res, Word) {
         var Index = Word[customSlots.baseSlots[0] + "Ptr"] || 0;
     
-        if (Word.Definitions[Index].Example.length === 0) {
-            return res.say(speech.PrintNoneExtra("examples")).reprompt(genericSpeech.PrintPrompt()).shouldEndSession(false);
+        if (Word.Definitions.length === 0 || Word.Definitions[Index].Example.length === 0) {
+            return res.say(speech.PrintNoneExtra("examples"))
+                .reprompt(genericSpeech.PrintPrompt()).shouldEndSession(false);
         }
         
         res.card({

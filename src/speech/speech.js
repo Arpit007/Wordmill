@@ -7,6 +7,8 @@ module.change_code = 1;
 
 var SSML = require('ssml-builder');
 
+var genericSpeech = require('./genericSpeech');
+
 var Speech = {
     NoWord : 'Please specify the word',
     

@@ -14,7 +14,6 @@ var speech = require('../speech/speech');
 
 var cursorOperation = function (req, res) {
     var word;
-    
     if (req.hasSession())
         word = req.getSession().get('Word') || new wordBase.BaseWord();
     else word = new wordBase.BaseWord();
@@ -103,7 +102,7 @@ var cursorOperation = function (req, res) {
     
         if (_.isEmpty(word.RootWord))
             word.RootWord = Word;
-        
+    
         //Define
         if (Operation === customSlots.baseSlots[ 0 ]) {
             if (word.LoadedDefinition && (word.Definitions.length > 0 ||  word.LoadedSecondary)) {
