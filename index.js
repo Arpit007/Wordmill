@@ -8,6 +8,8 @@ module.change_code = 1;
 var _ = require('lodash');
 var Alexa = require('alexa-app');
 var SSML = require('ssml-builder');
+var VoiceLabs = require("voicelabs")(require('./src/config').VoiceLabKey);
+
 
 process.on('uncaughtException', function (err) {
     console.error('Uncaught Error: ' + err.stack);
@@ -26,12 +28,27 @@ app.launch(function (req, res) {
     if (req.hasSession()) {
         req.getSession().clear();
     }
+    try {
+        VoiceLabs.track(req.getSession().details, 'Launch', null, null, null);
+    }
+    catch (e){
+        console.log(e);
+    }
+    
     console.log('Session At: ' + new Date());
     res.say(genericSpeech.PrintWelcome()).reprompt(genericSpeech.PrintPrompt()).shouldEndSession(false);
 });
 
 app.intent('baseOperation', intents.BaseOperation, function (req, res) {
     var operation = req.slot('OPERATION');
+    
+    try {
+        var intent = req.data.request.intent;
+        VoiceLabs.track(req.getSession().details, intent.name, intent.slots, null, null);
+    }
+    catch (e){
+        console.log(e);
+    }
     
     if(req.slot('ROOTWORD') && ['goodbye', 'good-bye', 'good bye'].indexOf(req.slot('ROOTWORD').toLowerCase()) !== -1
         && (!operation || _.isEmpty(operation.trim())))
@@ -46,6 +63,13 @@ app.intent('baseOperation', intents.BaseOperation, function (req, res) {
 app.intent('cursorOperation', intents.CursorOperation, function (req, res) {
     var operation = req.slot('OPERATION');
     
+    try {
+        var intent = req.data.request.intent;
+        VoiceLabs.track(req.getSession().details, intent.name, intent.slots, null, null);
+    }
+    catch (e){
+        console.log(e);
+    }
     if((req.slot('ROOTWORD') && ['goodbye', 'good-bye', 'good bye'].indexOf(req.slot('ROOTWORD').toLowerCase()) !== -1
         && (!operation || _.isEmpty(operation.trim())))||(['goodbye', 'good-bye', 'good bye'].indexOf(req.slot('CDIRECTION').toLowerCase()) !== -1))
         return res.say(genericSpeech.GoodBye).shouldEndSession(true);
@@ -54,28 +78,65 @@ app.intent('cursorOperation', intents.CursorOperation, function (req, res) {
 });
 
 app.intent('AMAZON.HelpIntent', function (req, res) {
+    try {
+        VoiceLabs.track(req.getSession().details, 'Help', null, null, null);
+    }
+    catch (e){
+        console.log(e);
+    }
     return res.say(genericSpeech.PrintHelp()).reprompt(genericSpeech.PrintPrompt()).shouldEndSession(false);
 });
 
 app.intent('AMAZON.StopIntent', function (req, res) {
+    try {
+        VoiceLabs.track(req.getSession().details, 'Stop', null, null, null);
+    }
+    catch (e){
+        console.log(e);
+    }
     return res.say(genericSpeech.GoodBye).shouldEndSession(true);
 });
 
 app.intent('AMAZON.CancelIntent', function (req, res) {
+    try {
+        VoiceLabs.track(req.getSession().details, 'Stop', null, null, null);
+    }
+    catch (e){
+        console.log(e);
+    }
     return res.say(genericSpeech.GoodBye).shouldEndSession(true);
 });
 
 app.intent('AMAZON.NextIntent', function (req, res) {
+    try {
+        VoiceLabs.track(req.getSession().details, 'Next', null, null, null);
+    }
+    catch (e){
+        console.log(e);
+    }
     req.CDIRECTION = "Next";
     return Persistence(req, res, cursorOperation);
 });
 
 app.intent('AMAZON.PreviousIntent', function (req, res) {
+    try {
+        VoiceLabs.track(req.getSession().details, 'Previous', null, null, null);
+    }
+    catch (e){
+        console.log(e);
+    }
     req.CDIRECTION = "Previous";
     return Persistence(req, res, cursorOperation);
 });
 
 app.intent('AMAZON.RepeatIntent', function (req, res) {
+    try {
+        VoiceLabs.track(req.getSession().details, 'Repeat', null, null, null);
+    }
+    catch (e){
+        console.log(e);
+    }
+    
     if (req.hasSession()){
         var Reply = req.getSession().get('Message');
         if (_.isEmpty(Reply))
